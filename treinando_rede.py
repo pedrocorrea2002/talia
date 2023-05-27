@@ -10,7 +10,7 @@ gestos_nomes = ['Carlos','Victor','Rafael']#,'Oi','Pedro']
 DATA_PATH = os.path.join('Gestos') #Pasta que vai guardar todos os gestos
 actions = np.array(gestos_nomes) #Cada String aqui é uma pasta, que representa 1 sinal específico da LIBRAS
 no_sequences = 30 #Número de amostras por gesto
-sequence_length = 30 #Números de frames por amostra
+sequence_length = 45 #Números de frames por amostra
 
 # Criando um mapa de gestos com index e valor
 label_map = {label:num for num, label in enumerate(actions)}
@@ -18,7 +18,7 @@ label_map = {label:num for num, label in enumerate(actions)}
 sequences, labels = [], [] #sequences são a entrada(x) e labels são as saídas(y)
 for action in actions:
     for sequence in range(no_sequences):
-        window = [] #cada windows é uma amostra contendo 30 frames
+        window = [] #cada windows é uma amostra contendo 45 frames
         for frame_num in range(sequence_length):
             res = np.load(os.path.join(DATA_PATH, action, str(sequence), f"{frame_num}.npy"))
             window.append(res) #cada res é um frame
@@ -45,7 +45,7 @@ model = Sequential()
 # com return_sequences você está especificando que uma camada precisa retornar algo para a camada seguinte usar
 #cada linha dessas é uma camada
 #a terceira camada LSTM não retorna nada porque a camada seguinte é uma camada densa e não precisa desse retorno
-model.add(LSTM(64, return_sequences=True, activation='relu', input_shape=(30,1662))) #aqui o número de entradas será 30 * 1662
+model.add(LSTM(64, return_sequences=True, activation='relu', input_shape=(45,1662))) #aqui o número de entradas será 45 * 1662
 model.add(LSTM(128, return_sequences=True, activation='relu'))
 model.add(LSTM(64, return_sequences=False, activation='relu'))
 model.add(Dense(64, activation='relu'))

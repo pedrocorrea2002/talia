@@ -21,7 +21,7 @@ while gesto != "exit" :
 DATA_PATH = os.path.join('Gestos') #Pasta que vai guardar todos os gestos
 actions = np.array(gestos_nomes) #Cada String aqui é uma pasta, que representa 1 sinal específico da LIBRAS
 no_sequences = 30 #Número de amostras por gesto
-sequence_length = 30 #Números de frames por amostra
+sequence_length = 45 #Números de frames por amostra
 
 # Criando pastas
 for action in actions:
@@ -30,6 +30,8 @@ for action in actions:
             os.makedirs(os.path.join(DATA_PATH,action, str(sequence)))
         except:
             pass
+
+exit()
 
 # Instanciando a câmera
 cap = cv2.VideoCapture(0)

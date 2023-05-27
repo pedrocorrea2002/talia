@@ -14,14 +14,14 @@ gestos_nomes = ['Carlos','Pedro','Victor','Rafael','Oi']
 DATA_PATH = os.path.join('Gestos') #Pasta que vai guardar todos os gestos
 actions = np.array(gestos_nomes) #Cada String aqui é uma pasta, que representa 1 sinal específico da LIBRAS
 no_sequences = 30 #Número de amostras por gesto
-sequence_length = 30 #Números de frames por amostra
+sequence_length = 45 #Números de frames por amostra
 
 label_map = {label:num for num, label in enumerate(actions)}
 
 sequences, labels = [], [] #sequences são a entrada(x) e labels são as saídas(y)
 for action in actions:
     for sequence in range(no_sequences):
-        window = [] #cada windows é uma amostra contendo 30 frames
+        window = [] #cada windows é uma amostra contendo 45 frames
         for frame_num in range(sequence_length):
             res = np.load(os.path.join(DATA_PATH, action, str(sequence), f"{frame_num}.npy"))
             window.append(res) #cada res é um frame

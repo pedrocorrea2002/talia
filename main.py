@@ -18,7 +18,7 @@ mp_holistic = mp.solutions.holistic #Possui modelos de marcadores do corpo, mão
 mp_drawing = mp.solutions.drawing_utils #Desenha esses marcadores na tela
 
 #Variáveis de detecção
-sequence = [] #Vai conter os 30 frames
+sequence = [] #Vai conter os 45 frames
 sentence = [] #Vai conter um histórico de traduções feitas
 threshold = 0.8 #Taxa mínima de confiança necessária no resultado para o resultado ser exibido
 gestos_nomes = ['Carlos','Victor','Rafael','Pedro','Oi']
@@ -46,10 +46,10 @@ with mp_holistic.Holistic(min_detection_confidence=0.5, min_tracking_confidence=
         keypoints = ek.extract_keypoints(results)
         sequence.append(keypoints)
 
-        # garantindo que o sequence conterá sempre apenas os últimos 30 frames coletados
-        sequence = sequence[-30:]
+        # garantindo que o sequence conterá sempre apenas os últimos 45 frames coletados
+        sequence = sequence[-45:]
 
-        if len(sequence) == 30:
+        if len(sequence) == 45:
             res = model.predict(np.expand_dims(sequence, axis=0))[0]
 
         ##### 3) Visualizando resultado #####
@@ -62,10 +62,12 @@ with mp_holistic.Holistic(min_detection_confidence=0.5, min_tracking_confidence=
                     sentence.append(actions[np.argmax(res)])
                     engine.say(actions[np.argmax(res)])
                     engine.runAndWait() #DIZENDO A TRADUÇÃO
+                    sequence = [] #Zerando sequencia de frames após a tradução
             else:
                 sentence.append(actions[np.argmax(res)])
                 engine.say(actions[np.argmax(res)])
                 engine.runAndWait() #DIZENDO A TRADUÇÃO
+                sequence = []  # Zerando sequencia de frames após a tradução
 
 
         # Garantindo que só serão exibidas as últimas 5 palavras traduzidas
