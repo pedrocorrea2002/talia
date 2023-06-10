@@ -91,7 +91,7 @@ with mp_holistic.Holistic(min_detection_confidence=0.5, min_tracking_confidence=
                 keypoints = ek.extract_keypoints(results)  # Montando array de coordenadas
                 npy_path = os.path.join(DATA_PATH, action, str(sequence),
                                         str(frame_num))  # Pasta onde o frame será salvo
-                #np.save(npy_path, keypoints)
+                np.save(npy_path, keypoints)
 
                 # Esse é o comando que mostra na tela o frame capturado
                 # "Captura" é o nome da telinha que abre
