@@ -2,6 +2,7 @@ import cv2 #PERMITE ACESSAR A WEBCAM - Ao instalar o mediapipe, ele já vem atre
 import mediapipe as mp #FAZ A PARTE DE RECONHECER CORPO, ROSTO E MÃOS E DEFINIR A LOCALIZAÇÃO DE MARCADORES COM BASE NESSE RECONHECIMENTO
 import os #AJUDA A TRABALHAR COM PASTAS E ENDEREÇOS DE PASTA DO PRÓPRIO COMPUTADOR
 import numpy as np #AJUDA A TRABALHAR COM DIFERENTES ARRAYS
+import time
 from Functions import mediapipe_detection as md
 from Functions import draw_landmarks as dl
 from Functions import extract_keypoints as ek
@@ -20,8 +21,8 @@ while gesto != "exit" :
 #DATA_PATH é uma pasta que vai guardar amostras de gestos salvos como arrays do numpy
 DATA_PATH = os.path.join('Gestos') #Pasta que vai guardar todos os gestos
 actions = np.array(gestos_nomes) #Cada String aqui é uma pasta, que representa 1 sinal específico da LIBRAS
-no_sequences = 30 #Número de amostras por gesto
-sequence_length = 45 #Números de frames por amostra
+no_sequences = 120 #Número de amostras por gesto
+sequence_length = 30 #Números de frames por amostra
 
 # Criando pastas
 for action in actions:
@@ -31,16 +32,25 @@ for action in actions:
         except:
             pass
 
-exit()
-
 # Instanciando a câmera
 cap = cv2.VideoCapture(0)
 
 # Acessando modelo Holistic do mediapipe
 # Testado outros valores para o min_detection_confidence e min_tracking_confidence, melhor deixar 0.5 para os 2 por hora
 with mp_holistic.Holistic(min_detection_confidence=0.5, min_tracking_confidence=0.5) as holistic:
+
     # Loop de sinais
     for action in actions:
+        #DELAY ANTES DE COMEÇAR
+        for x in reversed(range(10)):
+            success, image = cap.read()
+            cv2.rectangle(image, (0, 0), (640, 40), (245, 117, 16), -1)
+            cv2.putText(image, f'Em {x} segundos: {action}', (15, 20),
+                        cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 1, cv2.LINE_AA)
+
+            cv2.imshow("Captura", image)
+            cv2.waitKey(1000)
+
         # Loop de amostras ("Vídeos")
         for sequence in range(no_sequences):
             # Loop de frames
@@ -65,15 +75,17 @@ with mp_holistic.Holistic(min_detection_confidence=0.5, min_tracking_confidence=
                 # Legendas que indicam qual amostra e gesto está sendo coletado
                 # UTIL PARA SABER QUANDO COMEÇA E QUANDO TERMINA CADA COLETA
                 if frame_num == 0:
+                    cv2.rectangle(image, (0, 0), (640, 40), (245, 117, 16), -1)
                     cv2.putText(image, 'INICIANDO COLETA', (120, 200),
-                                cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 1, cv2.LINE_AA)
-                    cv2.putText(image, f'Demonstrando "{action}" -- amostra numero {sequence}', (15, 20),
-                                cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 1, cv2.LINE_AA)
+                                cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 1, cv2.LINE_AA)
+                    cv2.putText(image, f'Demonstrando "{action}" -- amostra numero {sequence} -- {frame_num}', (15, 20),
+                                cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 1, cv2.LINE_AA)
                     cv2.waitKey(
                         2000)  # Mandando esperar para ter tempo de você voltar pra posição original antes de começar a próxima coleta
                 else:
-                    cv2.putText(image, f'Demonstrando "{action}" -- amostra numero {sequence}', (15, 20),
-                                cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 1, cv2.LINE_AA)
+                    cv2.rectangle(image, (0, 0), (640, 40), (245, 117, 16), -1)
+                    cv2.putText(image, f'Demonstrando "{action}" -- amostra numero {sequence} -- {frame_num}', (15, 20),
+                                cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 1, cv2.LINE_AA)
 
                 # Salvando marcadores coletados do frame na pasta específica deles
                 keypoints = ek.extract_keypoints(results)  # Montando array de coordenadas
