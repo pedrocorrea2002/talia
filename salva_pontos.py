@@ -34,6 +34,8 @@ for action in actions:
 
 # Instanciando a câmera
 cap = cv2.VideoCapture(0)
+
+#Tornando a tela redimencionável
 cv2.namedWindow("Captura", cv2.WINDOW_NORMAL)
 cv2.resizeWindow("Captura", 1080, 720)
 
