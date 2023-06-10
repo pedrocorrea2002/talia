@@ -34,6 +34,8 @@ for action in actions:
 
 # Instanciando a câmera
 cap = cv2.VideoCapture(0)
+cv2.namedWindow("Captura", cv2.WINDOW_NORMAL)
+cv2.resizeWindow("Captura", 1080, 720)
 
 # Acessando modelo Holistic do mediapipe
 # Testado outros valores para o min_detection_confidence e min_tracking_confidence, melhor deixar 0.5 para os 2 por hora
@@ -91,7 +93,7 @@ with mp_holistic.Holistic(min_detection_confidence=0.5, min_tracking_confidence=
                 keypoints = ek.extract_keypoints(results)  # Montando array de coordenadas
                 npy_path = os.path.join(DATA_PATH, action, str(sequence),
                                         str(frame_num))  # Pasta onde o frame será salvo
-                np.save(npy_path, keypoints)
+                #np.save(npy_path, keypoints)
 
                 # Esse é o comando que mostra na tela o frame capturado
                 # "Captura" é o nome da telinha que abre
@@ -99,6 +101,7 @@ with mp_holistic.Holistic(min_detection_confidence=0.5, min_tracking_confidence=
                 # Sempre que for usar esse comando parece ser bom fazer dentro de um loop, mesmo que seja exibido uma imagem fixa
                 # TESTADO: Mesmo que aja outro loop após o termino desse a telinha também para de responder
                 # A janela com imagem travar não é culpa do término da execução do código em si e sim do término do loop
+
                 cv2.imshow("Captura", image)
 
                 # Encerra o loop quando é apertado a tecla "q"
