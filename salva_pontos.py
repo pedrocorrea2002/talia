@@ -21,12 +21,13 @@ while gesto != "exit" :
 #DATA_PATH é uma pasta que vai guardar amostras de gestos salvos como arrays do numpy
 DATA_PATH = os.path.join('Gestos') #Pasta que vai guardar todos os gestos
 actions = np.array(gestos_nomes) #Cada String aqui é uma pasta, que representa 1 sinal específico da LIBRAS
-no_sequences = 120 #Número de amostras por gesto
+nro_amostra_inicial = input("A primeira amostra que você ensinar deve começar por qual número? Digite um número de 0 a infinito: ")
+no_sequences = input("Quantas amostras de cada gesto você vai ensinar? ")
 sequence_length = 30 #Números de frames por amostra
 
 # Criando pastas
 for action in actions:
-    for sequence in range(no_sequences):
+    for sequence in range(int(nro_amostra_inicial),(int(nro_amostra_inicial) + int(no_sequences))):
         try:
             os.makedirs(os.path.join(DATA_PATH,action, str(sequence)))
         except:
@@ -34,8 +35,6 @@ for action in actions:
 
 # Instanciando a câmera
 cap = cv2.VideoCapture(0)
-
-#Tornando a tela redimencionável
 cv2.namedWindow("Captura", cv2.WINDOW_NORMAL)
 cv2.resizeWindow("Captura", 1080, 720)
 
