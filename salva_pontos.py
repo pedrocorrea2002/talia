@@ -21,7 +21,7 @@ while gesto != "exit" :
 #DATA_PATH é uma pasta que vai guardar amostras de gestos salvos como arrays do numpy
 DATA_PATH = os.path.join('Gestos') #Pasta que vai guardar todos os gestos
 actions = np.array(gestos_nomes) #Cada String aqui é uma pasta, que representa 1 sinal específico da LIBRAS
-nro_amostra_inicial = input("A primeira amostra que você ensinar deve começar por qual número? Digite um número de 0 a infinito: ")
+nro_amostra_inicial = input("A primeira amostra que você ensinar deve ser identificada por qual número? Digite um número de 0 a infinito: ")
 no_sequences = input("Quantas amostras de cada gesto você vai ensinar? ")
 sequence_length = 30 #Números de frames por amostra
 
