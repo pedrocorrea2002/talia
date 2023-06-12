@@ -26,7 +26,7 @@ sequence_length = 30 #Números de frames por amostra
 
 # Criando pastas
 for action in actions:
-    for sequence in range(int(nro_amostra_inicial),(int(nro_amostra_inicial) + int(no_sequences))*4):
+    for sequence in range(int(nro_amostra_inicial),(int(nro_amostra_inicial) + int(no_sequences))*2):
         try:
             os.makedirs(os.path.join(DATA_PATH,action, str(sequence)))
         except:
