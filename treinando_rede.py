@@ -4,13 +4,13 @@ from sklearn.model_selection import train_test_split
 from keras.utils import to_categorical
 # Coletando nomes dos gestos que cujo as imagens serão capturadas
 
-gestos_nomes = ['Carlos','Victor','Rafael']#,'Oi','Pedro']
+gestos_nomes = ['Olá','Boa noite','Criar','Eu',"_"]
 
 #DATA_PATH é uma pasta que vai guardar amostras de gestos salvos como arrays do numpy
 DATA_PATH = os.path.join('Gestos') #Pasta que vai guardar todos os gestos
 actions = np.array(gestos_nomes) #Cada String aqui é uma pasta, que representa 1 sinal específico da LIBRAS
-no_sequences = 30 #Número de amostras por gesto
-sequence_length = 45 #Números de frames por amostra
+no_sequences = 70 #Número de amostras por gesto
+sequence_length = 30 #Números de frames por amostra
 
 # Criando um mapa de gestos com index e valor
 label_map = {label:num for num, label in enumerate(actions)}
@@ -29,28 +29,45 @@ x = np.array(sequences)
 y = to_categorical(labels).astype(int) #define um array de 0s e 1s específico para cada categoria
 
 #separando entradas e saídas de treino e de teste
-x_train, x_test, y_train, y_test = train_test_split(x,y,test_size=0.05)
+x_train, x_test, y_train, y_test = train_test_split(x,y,test_size=0.1)
 
-# 7) criando e treinando rede neural LSTM
+#Salvando dados de treino
+npy_path = os.path.join("Dados de treino\\x_test")  # Pasta onde o frame será salvo
+np.save(npy_path, x_test)
+
+npy_path = os.path.join("Dados de treino\\y_test")  # Pasta onde o frame será salvo
+np.save(npy_path, y_test)
+
+# Criando e treinando rede neural LSTM
 from keras.models import Sequential
 from keras.layers import LSTM, Dense
-from keras.callbacks import TensorBoard
+from keras.callbacks import TensorBoard, EarlyStopping
 
 log_dir = os.path.join('Logs')
-tb_callback = TensorBoard(log_dir=log_dir)
+earlyStop = EarlyStopping(monitor='categorical_accuracy',restore_best_weights=True, mode='max', start_from_epoch=15, patience=5, baseline=0.95, min_delta=0.1)
+#tensorB = TensorBoard(log_dir=log_dir)
 
-#criando camadas
+# Criando camadas
 model = Sequential()
 #64 lstm units que não necessariamente é o número de camadas
 # com return_sequences você está especificando que uma camada precisa retornar algo para a camada seguinte usar
 #cada linha dessas é uma camada
 #a terceira camada LSTM não retorna nada porque a camada seguinte é uma camada densa e não precisa desse retorno
-model.add(LSTM(64, return_sequences=True, activation='relu', input_shape=(45,1662))) #aqui o número de entradas será 45 * 1662
+model.add(LSTM(128, activation='relu', return_sequences=True, input_shape=(30,1662))) #aqui o número de entradas será 30 * 1662
+model.add(LSTM(256, activation='relu', return_sequences=True))
+model.add(LSTM(128, activation='relu', return_sequences=False))
+model.add(Dense(128, activation='relu'))
+model.add(Dense(64, activation='relu'))
+model.add(Dense(actions.shape[0], activation='softmax'))
+
+'''
+model.add(LSTM(64, return_sequences=True, activation='relu', input_shape=(30,1662)))
 model.add(LSTM(128, return_sequences=True, activation='relu'))
 model.add(LSTM(64, return_sequences=False, activation='relu'))
 model.add(Dense(64, activation='relu'))
 model.add(Dense(32, activation='relu'))
 model.add(Dense(actions.shape[0], activation='softmax'))
+'''
 
 # Após serem definidas as configurações das camadas da rede, ela é compilada
 # Segundo o cara do vídeo a loss sendo "categorical_crossentropy" é bom para quando você tem um multiplas clasificações
@@ -59,6 +76,6 @@ model.compile(optimizer="Adam", loss='categorical_crossentropy', metrics=['categ
 
 # TREINANDO MODELO
 # 2000 epochs pode ser muita coisa para apenas 5 categorias, mas vou manter
-model.fit(x_train, y_train, epochs=2000, callbacks=[tb_callback])
+model.fit(x_train, y_train, epochs=100, callbacks=[earlyStop])
 
 model.save('gestos.h5')
