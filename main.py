@@ -18,10 +18,10 @@ mp_holistic = mp.solutions.holistic #Possui modelos de marcadores do corpo, mão
 mp_drawing = mp.solutions.drawing_utils #Desenha esses marcadores na tela
 
 #Variáveis de detecção
-sequence = [] #Vai conter os 45 frames
+sequence = [] #Vai conter os 30 frames
 sentence = [] #Vai conter um histórico de traduções feitas
-threshold = 0.8 #Taxa mínima de confiança necessária no resultado para o resultado ser exibido
-gestos_nomes = ['Carlos','Victor','Rafael','Pedro','Oi']
+threshold = 0.9 #Taxa mínima de confiança necessária no resultado para o resultado ser exibido
+gestos_nomes = ['Olá','Boa noite','Criar','Eu',"_"]
 actions = np.array(gestos_nomes)
 res = [0]
 
@@ -46,18 +46,23 @@ with mp_holistic.Holistic(min_detection_confidence=0.5, min_tracking_confidence=
         keypoints = ek.extract_keypoints(results)
         sequence.append(keypoints)
 
-        # garantindo que o sequence conterá sempre apenas os últimos 45 frames coletados
-        sequence = sequence[-45:]
+        # garantindo que o sequence conterá sempre apenas os últimos 30 frames coletados
+        sequence = sequence[-30:]
 
-        if len(sequence) == 45:
+        if len(sequence) == 30:
             res = model.predict(np.expand_dims(sequence, axis=0))[0]
+
+            #print(res0)
+
+            #res = res0[0]
+
 
         ##### 3) Visualizando resultado #####
         #Checa se o grau de confiança da tradução é maior que 0.4
-        if res[np.argmax(res)] > threshold:
+        if res[np.argmax(res)] > threshold and actions[np.argmax(res)] != "_" :
             # Caso ainda não existam palavras no array, é adicionado dentro do else
             if len(sentence) > 0:
-                # É checado se a palavra atual é igual a palavra anterior, se sim é ignorado a tradução para evitar repetição
+            #    # É checado se a palavra atual é igual a palavra anterior, se sim é ignorado a tradução para evitar repetição
                 if actions[np.argmax(res)] != sentence[-1]:
                     sentence.append(actions[np.argmax(res)])
                     engine.say(actions[np.argmax(res)])
@@ -69,14 +74,13 @@ with mp_holistic.Holistic(min_detection_confidence=0.5, min_tracking_confidence=
                 engine.runAndWait() #DIZENDO A TRADUÇÃO
                 sequence = []  # Zerando sequencia de frames após a tradução
 
-
         # Garantindo que só serão exibidas as últimas 5 palavras traduzidas
         if len(sentence) > 5:
             sentence = sentence[-5:]
 
         # Exibindo as 5 últimas traduções na tela
         cv2.rectangle(image, (0,0), (640,40), (245,117,16), -1)
-        cv2.putText(image, ' '.join(sentence), (3,30), cv2.FONT_HERSHEY_SIMPLEX, 1, (255,255,255), 2, cv2.LINE_AA)
+        cv2.putText(image, ' '.join(sentence), (3,30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255,255,255), 2, cv2.LINE_AA)
 
         # Esse é o comando que mostra na tela o frame capturado
         # "Captura" é o nome da telinha que abre

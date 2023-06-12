@@ -2,7 +2,6 @@ import cv2 #PERMITE ACESSAR A WEBCAM - Ao instalar o mediapipe, ele já vem atre
 import mediapipe as mp #FAZ A PARTE DE RECONHECER CORPO, ROSTO E MÃOS E DEFINIR A LOCALIZAÇÃO DE MARCADORES COM BASE NESSE RECONHECIMENTO
 import os #AJUDA A TRABALHAR COM PASTAS E ENDEREÇOS DE PASTA DO PRÓPRIO COMPUTADOR
 import numpy as np #AJUDA A TRABALHAR COM DIFERENTES ARRAYS
-import time
 from Functions import mediapipe_detection as md
 from Functions import draw_landmarks as dl
 from Functions import extract_keypoints as ek

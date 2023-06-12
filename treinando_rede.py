@@ -44,7 +44,7 @@ from keras.layers import LSTM, Dense
 from keras.callbacks import TensorBoard, EarlyStopping
 
 log_dir = os.path.join('Logs')
-earlyStop = EarlyStopping(monitor='categorical_accuracy',restore_best_weights=True, mode='max', start_from_epoch=15, patience=5, baseline=0.95, min_delta=0.1)
+earlyStop = EarlyStopping(monitor='loss',restore_best_weights=True, mode='min', start_from_epoch=15, patience=5)
 #tensorB = TensorBoard(log_dir=log_dir)
 
 # Criando camadas
