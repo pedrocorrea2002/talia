@@ -9,7 +9,7 @@ gestos_nomes = ['Olá','Boa noite','Criar','Eu',"_"]
 #DATA_PATH é uma pasta que vai guardar amostras de gestos salvos como arrays do numpy
 DATA_PATH = os.path.join('Gestos') #Pasta que vai guardar todos os gestos
 actions = np.array(gestos_nomes) #Cada String aqui é uma pasta, que representa 1 sinal específico da LIBRAS
-no_sequences = 70 #Número de amostras por gesto
+no_sequences = 140 #Número de amostras por gesto
 sequence_length = 30 #Números de frames por amostra
 
 # Criando um mapa de gestos com index e valor
@@ -18,7 +18,7 @@ label_map = {label:num for num, label in enumerate(actions)}
 sequences, labels = [], [] #sequences são a entrada(x) e labels são as saídas(y)
 for action in actions:
     for sequence in range(no_sequences):
-        window = [] #cada windows é uma amostra contendo 45 frames
+        window = [] #cada windows é uma amostra contendo 30 frames
         for frame_num in range(sequence_length):
             res = np.load(os.path.join(DATA_PATH, action, str(sequence), f"{frame_num}.npy"))
             window.append(res) #cada res é um frame
@@ -40,11 +40,11 @@ np.save(npy_path, y_test)
 
 # Criando e treinando rede neural LSTM
 from keras.models import Sequential
-from keras.layers import LSTM, Dense
+from keras.layers import LSTM, Dense, Conv1D, Flatten
 from keras.callbacks import TensorBoard, EarlyStopping
 
 log_dir = os.path.join('Logs')
-earlyStop = EarlyStopping(monitor='loss',restore_best_weights=True, mode='min', start_from_epoch=15, patience=5)
+earlyStop = EarlyStopping(monitor='loss',restore_best_weights=True, mode='min', start_from_epoch=45, patience=5)
 #tensorB = TensorBoard(log_dir=log_dir)
 
 # Criando camadas
@@ -56,9 +56,18 @@ model = Sequential()
 model.add(LSTM(128, activation='relu', return_sequences=True, input_shape=(30,1662))) #aqui o número de entradas será 30 * 1662
 model.add(LSTM(256, activation='relu', return_sequences=True))
 model.add(LSTM(128, activation='relu', return_sequences=False))
+model.add(Flatten())
 model.add(Dense(128, activation='relu'))
 model.add(Dense(64, activation='relu'))
 model.add(Dense(actions.shape[0], activation='softmax'))
+
+'''
+model.add(Conv1D(filters=64, kernel_size=3, activation='relu', input_shape=(30,1662)))
+model.add(Conv1D(filters=64, kernel_size=3, activation='relu'))
+model.add(Flatten())
+model.add(Dense(128, activation='relu'))
+model.add(Dense(actions.shape[0], activation='softmax'))
+'''
 
 '''
 model.add(LSTM(64, return_sequences=True, activation='relu', input_shape=(30,1662)))
@@ -72,10 +81,11 @@ model.add(Dense(actions.shape[0], activation='softmax'))
 # Após serem definidas as configurações das camadas da rede, ela é compilada
 # Segundo o cara do vídeo a loss sendo "categorical_crossentropy" é bom para quando você tem um multiplas clasificações
 # Para classificações entre duas opções é possível usar binary_crossentropy
+#model.compile(optimizer="Adam", loss='categorical_crossentropy', metrics=['categorical_accuracy'])
 model.compile(optimizer="Adam", loss='categorical_crossentropy', metrics=['categorical_accuracy'])
 
 # TREINANDO MODELO
 # 2000 epochs pode ser muita coisa para apenas 5 categorias, mas vou manter
-model.fit(x_train, y_train, epochs=100, callbacks=[earlyStop])
+model.fit(x_train, y_train, epochs=200, callbacks=[earlyStop])
 
 model.save('gestos.h5')
