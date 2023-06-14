@@ -40,11 +40,11 @@ np.save(npy_path, y_test)
 
 # Criando e treinando rede neural LSTM
 from keras.models import Sequential
-from keras.layers import LSTM, Dense, Conv1D, Flatten
+from keras.layers import LSTM, Dense, Conv1D, Flatten, Dropout
 from keras.callbacks import TensorBoard, EarlyStopping
 
 log_dir = os.path.join('Logs')
-earlyStop = EarlyStopping(monitor='loss',restore_best_weights=True, mode='min', start_from_epoch=45, patience=5)
+earlyStop = EarlyStopping(monitor='loss',restore_best_weights=True, mode='min', start_from_epoch=45, patience=5, min_delta=0.0001)
 #tensorB = TensorBoard(log_dir=log_dir)
 
 # Criando camadas
@@ -53,13 +53,14 @@ model = Sequential()
 # com return_sequences você está especificando que uma camada precisa retornar algo para a camada seguinte usar
 #cada linha dessas é uma camada
 #a terceira camada LSTM não retorna nada porque a camada seguinte é uma camada densa e não precisa desse retorno
-model.add(LSTM(128, activation='relu', return_sequences=True, input_shape=(30,1662))) #aqui o número de entradas será 30 * 1662
-model.add(LSTM(256, activation='relu', return_sequences=True))
-model.add(LSTM(128, activation='relu', return_sequences=False))
-model.add(Flatten())
-model.add(Dense(128, activation='relu'))
-model.add(Dense(64, activation='relu'))
-model.add(Dense(actions.shape[0], activation='softmax'))
+model.add(LSTM(units=128, activation='relu', return_sequences=True, input_shape=(30,1662))) #aqui o número de entradas será 30 * 1662
+model.add(Dropout(0.2))
+model.add(LSTM(units=256, activation='relu', return_sequences=True))
+model.add(LSTM(units=128, activation='relu', return_sequences=False))
+model.add(Dropout(0.2))
+model.add(Dense(units=128, activation='relu'))
+model.add(Dense(units=64, activation='relu'))
+model.add(Dense(units=actions.shape[0], activation='softmax'))
 
 '''
 model.add(Conv1D(filters=64, kernel_size=3, activation='relu', input_shape=(30,1662)))
@@ -86,6 +87,6 @@ model.compile(optimizer="Adam", loss='categorical_crossentropy', metrics=['categ
 
 # TREINANDO MODELO
 # 2000 epochs pode ser muita coisa para apenas 5 categorias, mas vou manter
-model.fit(x_train, y_train, epochs=200, callbacks=[earlyStop])
+model.fit(x_train, y_train, epochs=2000, callbacks=[earlyStop])
 
 model.save('gestos.h5')
