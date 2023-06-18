@@ -18,9 +18,11 @@ def extract_keypoints(results):
                    results.right_hand_landmarks.landmark]).flatten() if results.right_hand_landmarks else np.zeros(
         21 * 3)
 
+    '''
     # Coletando coordenadas de todos os pontos do rosto e depois juntando tudo em um único array
     # Se o rosto não for detectado, é preenchido um array de 1404 zeros
     face = np.array([[res.x, res.y, res.z] for res in
                      results.face_landmarks.landmark]).flatten() if results.face_landmarks else np.zeros(468 * 3)
+    '''
 
-    return np.concatenate([pose, face, lh, rh])
+    return np.concatenate([pose, lh, rh])

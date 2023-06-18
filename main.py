@@ -21,7 +21,7 @@ mp_drawing = mp.solutions.drawing_utils #Desenha esses marcadores na tela
 sequence = [] #Vai conter os 30 frames
 sentence = [] #Vai conter um histórico de traduções feitas
 threshold = 0.9 #Taxa mínima de confiança necessária no resultado para o resultado ser exibido
-gestos_nomes = ['Olá','Boa noite','Criar','Eu',"_"]
+gestos_nomes = ['Olá','Boa noite','Criar',"_"]
 actions = np.array(gestos_nomes)
 res = [0]
 

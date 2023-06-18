@@ -6,6 +6,7 @@ def draw_landmarks(image, results):
     mp_holistic = mp.solutions.holistic  # Possui modelos de marcadores do corpo, mãos e rosto
     mp_drawing = mp.solutions.drawing_utils  # Desenha esses marcadores na tela
 
+    '''
     # Rosto
     mp_drawing.draw_landmarks(
         image,
@@ -13,6 +14,7 @@ def draw_landmarks(image, results):
         mp_drawing.DrawingSpec(color=(80, 110, 10), thickness=1, circle_radius=1),  # Muda o estilo dos marcadores
         mp_drawing.DrawingSpec(color=(80, 256, 121), thickness=1, circle_radius=1)  # Muda o estilo das conexões
     )
+    '''
 
     # Corpo
     mp_drawing.draw_landmarks(

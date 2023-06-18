@@ -4,9 +4,9 @@ from sklearn.model_selection import train_test_split
 from keras.utils import to_categorical
 # Coletando nomes dos gestos que cujo as imagens serão capturadas
 
-gestos_nomes = ['Olá','Boa noite','Criar','Eu',"_"]
+gestos_nomes = ['Olá','Boa noite','Criar',"_"]
 
-#DATA_PATH é uma pasta que vai guardar amostras de gestos salvos como arrays do numpy
+#DATA_PATH é uma pasta que vai guardar frames de amostras de gestos salvos como arrays do numpy
 DATA_PATH = os.path.join('Gestos') #Pasta que vai guardar todos os gestos
 actions = np.array(gestos_nomes) #Cada String aqui é uma pasta, que representa 1 sinal específico da LIBRAS
 no_sequences = 140 #Número de amostras por gesto
@@ -21,6 +21,7 @@ for action in actions:
         window = [] #cada windows é uma amostra contendo 30 frames
         for frame_num in range(sequence_length):
             res = np.load(os.path.join(DATA_PATH, action, str(sequence), f"{frame_num}.npy"))
+            print(os.path.join(DATA_PATH, action, str(sequence), f"{frame_num}.npy --  {len(res)}"))
             window.append(res) #cada res é um frame
         sequences.append(window)
         labels.append(label_map[action])
@@ -32,10 +33,11 @@ y = to_categorical(labels).astype(int) #define um array de 0s e 1s específico p
 x_train, x_test, y_train, y_test = train_test_split(x,y,test_size=0.1)
 
 #Salvando dados de treino
-npy_path = os.path.join("Dados de treino\\x_test")  # Pasta onde o frame será salvo
+os.makedirs("Dados de teste")
+npy_path = os.path.join("Dados de teste\\x_test")  # Pasta onde o frame será salvo
 np.save(npy_path, x_test)
 
-npy_path = os.path.join("Dados de treino\\y_test")  # Pasta onde o frame será salvo
+npy_path = os.path.join("Dados de teste\\y_test")  # Pasta onde o frame será salvo
 np.save(npy_path, y_test)
 
 # Criando e treinando rede neural LSTM
@@ -53,7 +55,7 @@ model = Sequential()
 # com return_sequences você está especificando que uma camada precisa retornar algo para a camada seguinte usar
 #cada linha dessas é uma camada
 #a terceira camada LSTM não retorna nada porque a camada seguinte é uma camada densa e não precisa desse retorno
-model.add(LSTM(units=128, activation='relu', return_sequences=True, input_shape=(30,1662))) #aqui o número de entradas será 30 * 1662
+model.add(LSTM(units=128, activation='relu', return_sequences=True, input_shape=(30,258))) #aqui o número de entradas será 30 * 258
 model.add(Dropout(0.2))
 model.add(LSTM(units=256, activation='relu', return_sequences=True))
 model.add(LSTM(units=128, activation='relu', return_sequences=False))
@@ -87,6 +89,6 @@ model.compile(optimizer="Adam", loss='categorical_crossentropy', metrics=['categ
 
 # TREINANDO MODELO
 # 2000 epochs pode ser muita coisa para apenas 5 categorias, mas vou manter
-model.fit(x_train, y_train, epochs=2000, callbacks=[earlyStop])
+model.fit(x_train, y_train, epochs=150, callbacks=[earlyStop])
 
 model.save('gestos.h5')
