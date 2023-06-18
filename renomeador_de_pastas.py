@@ -2,7 +2,7 @@
 
 import os
 
-nome_gesto = input("Nome da pasta do gesto: ") #nome da pasta do gesto
+nome_gesto = input("Nome da pasta do gesto: ")
 nro_amostras = int(input("Número de amostras contidas nela: "))
 nro_inicio_atual = int(input("Número atual da primeira amostra: "))
 nro_inicio = int(input("Número que deve possuir a primeira amostra após a edição: "))

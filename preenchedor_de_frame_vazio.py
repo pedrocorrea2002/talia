@@ -17,14 +17,13 @@ for amostra in range(nro_amostras) :
         with open(frame_path, 'r') as file:
             file.seek(0, os.SEEK_END)
 
-
             try:
                 teste = np.load(frame_path)
 
                 if (frame != 0):
                     ultima_amostra_cheia = frame_path
             except:
-                if(ultima_amostra_cheia != ""):
+                if(ultima_amostra_cheia != "" and frame != 0):
                     ultima_amostra_cheia_npy = np.load(ultima_amostra_cheia)
                     np.save(frame_path,ultima_amostra_cheia_npy)
                     print("Salvei: ",frame_path)
