@@ -26,7 +26,9 @@ actions = np.array(gestos_nomes)
 res = [0]
 
 # Instanciando a câmera
-cap = cv2.VideoCapture(0)  # É nessa linha que a câmera é acessada
+cap = cv2.VideoCapture(0)
+cv2.namedWindow("Captura", cv2.WINDOW_NORMAL)
+cv2.resizeWindow("Captura", 1080, 720)
 
 # Acessando modelo Holistic do mediapipe
 # [!!!testar esses dois parametros depois]
