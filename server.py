@@ -26,3 +26,5 @@ def Logon():
 
 if __name__ == '__main__':
     abacate.run(debug=True)
+
+    # ! EU VOU TER QUE ACHAR UM FORMA DE ELE NÃO ESTRANHAR A CONFIRMAÇÃO DE SENHA FICANDO VAZIA NO LOGIN, PORÉM SENDO OBRIGATÓRIO NO LOGON
