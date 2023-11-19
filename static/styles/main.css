@@ -91,7 +91,7 @@ nav a {
 
 .input-box{
     width: 100%;
-    margin-bottom: 30px;
+    margin-bottom: 15px;
 
     display: flex;
     flex-direction: column;
@@ -103,7 +103,10 @@ nav a {
 }
 
 .input-box-input{
+    height: 30px;
     width: 100%;
+
+    font-size: 20px;
 }
 
 .button{

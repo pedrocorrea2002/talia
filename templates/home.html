@@ -1,26 +1,23 @@
 {% extends 'main.html'%}
 {% block conteudo %}
     <div id="auth-body">
+        {{form.csrf_token}} <!-- É DITO QUE AUMENTA A SEGURANÇA -->
+        {{form.hidden_tag()}} <!-- ESSE AQUI OCULTA O TEXTO DE CIMA DENTRO DA TELA -->
+
         <div id="auth-body-half-logon" class="auth-body-half">
             <p id="auth-title-logon" class="auth-title">Primeiro acesso</p>
             <div class="auth-form">
                 <div class="input-box">
                     <p class="input-box-text">Qual seu nome?</p>
-                    <input class="input-box-input"></input>
+                    {{form.username.label}}{{form.username(class="input-box-input")}}
                 </div>
                 <div class="input-box">
                     <p class="input-box-text">Crie uma senha:</p>
-                    <input 
-                        class="input-box-input"
-                        type="password"
-                    ></input>
+                    {{form.username.label}}{{form.password(class="input-box-input")}}
                 </div>
                 <div class="input-box">
                     <p class="input-box-text">Reescreva essa senha:</p>
-                    <input 
-                        class="input-box-input"
-                        type="password"
-                    ></input>
+                    {{form.username.label}}{{form.password(class="input-box-input")}}
                 </div>
                 <div id="button-logon" class="button">
                     Cadastrar
@@ -32,16 +29,11 @@
             <div class="auth-form">
                 <div class="input-box">
                     <p class="input-box-text">Qual seu nome?</p>
-                    <input 
-                        class="input-box-input"
-                    ></input>
+                    {{form.username.label}}{{form.username(class="input-box-input")}}
                 </div>
                 <div class="input-box">
                     <p class="input-box-text">Qual sua senha?</p>
-                    <input 
-                        class="input-box-input"
-                        type="password"
-                    ></input>
+                    {{form.username.label}}{{form.password(class="input-box-input")}}
                 </div>
                 <div id="button-login" class="button">
                     Entrar
