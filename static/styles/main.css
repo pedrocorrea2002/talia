@@ -86,7 +86,7 @@ nav a {
 
     display: flex;
     flex-direction: column;
-    align-items: start;
+    align-items: center;
 }
 
 .input-box{
@@ -104,4 +104,28 @@ nav a {
 
 .input-box-input{
     width: 100%;
+}
+
+.button{
+    height: 40px;
+    width: 200px;
+
+    font-weight: 700;
+
+    border-radius: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.button:hover{
+    cursor: pointer;
+}
+
+#button-logon{
+    background-color: white;
+}
+
+#button-login{
+    background-color: #ff9600;
 }
