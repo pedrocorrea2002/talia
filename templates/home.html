@@ -1,0 +1,46 @@
+{% extends 'main.html'%}
+{% block conteudo %}
+    <div id="auth-body">
+        <div id="auth-body-half-logon" class="auth-body-half">
+            <p id="auth-title-logon" class="auth-title">Primeiro acesso</p>
+            <div class="auth-form">
+                <div class="input-box">
+                    <p class="input-box-text">Qual seu nome?</p>
+                    <input class="input-box-input"></input>
+                </div>
+                <div class="input-box">
+                    <p class="input-box-text">Crie uma senha:</p>
+                    <input 
+                        class="input-box-input"
+                        type="password"
+                    ></input>
+                </div>
+                <div class="input-box">
+                    <p class="input-box-text">Reescreva essa senha:</p>
+                    <input 
+                        class="input-box-input"
+                        type="password"
+                    ></input>
+                </div>
+            </div>
+        </div>
+        <div id="auth-body-half-login" class="auth-body-half">
+            <p id="auth-title-login" class="auth-title">Já acessei antes</p>
+            <div class="auth-form">
+                <div class="input-box">
+                    <p class="input-box-text">Qual seu nome?</p>
+                    <input 
+                        class="input-box-input"
+                    ></input>
+                </div>
+                <div class="input-box">
+                    <p class="input-box-text">Qual sua senha?</p>
+                    <input 
+                        class="input-box-input"
+                        type="password"
+                    ></input>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
