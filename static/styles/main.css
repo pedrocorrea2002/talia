@@ -74,7 +74,7 @@ nav a {
     font-size: 30px;
     font-weight: 700;
 
-    margin-bottom: 50px;
+    margin-bottom: 20px;
 }
 
 #auth-title-logon{
@@ -100,6 +100,12 @@ nav a {
 
 .input-box-text{
     font-weight: 700;
+}
+
+#field_with_error{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
 }
 
 .input-box-input{
@@ -142,4 +148,13 @@ nav a {
 
 #button-login:hover{
     background-color: #ff9600;
+}
+
+#error_message{
+    margin-left: 20px;
+
+    font-size: 20px;
+    font-weight: 700;
+    background-color: white;
+    color:red;
 }

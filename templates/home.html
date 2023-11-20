@@ -4,19 +4,36 @@
         <form id="auth-body-half-logon" class="auth-body-half" method="POST" action="{{url_for('home')}}">
             {{form_logon.csrf_token}} <!-- É DITO QUE AUMENTA A SEGURANÇA -->
             {{form_logon.hidden_tag()}} <!-- ESSE AQUI OCULTA O TEXTO DE CIMA DENTRO DA TELA -->
+
             <p id="auth-title-logon" class="auth-title">Primeiro acesso</p>
             <div class="auth-form">
                 <div class="input-box">
-                    <p class="input-box-text">Qual seu nome?</p>
-                    {{form_logon.username.label}}{{form_logon.username(class="input-box-input")}}
+                    <div id="field_with_error">
+                        <p class="input-box-text">Qual seu nome?</p>
+                        {% if exist_user %}
+                            <p id="error_message">
+                                O usuário e senha informados já estão em uso!
+                            </p>
+                        {% endif %}
+                    </div>
+                    {{form_logon.username(class="input-box-input")}}
                 </div>
                 <div class="input-box">
                     <p class="input-box-text">Crie uma senha:</p>
-                    {{form_logon.password.label}}{{form_logon.password(class="input-box-input")}}
+                    {{form_logon.password(class="input-box-input")}}
                 </div>
                 <div class="input-box">
-                    <p class="input-box-text">Reescreva essa senha:</p>
-                    {{form_logon.confirm_password.label}}{{form_logon.confirm_password(class="input-box-input")}}
+                    <div id="field_with_error">
+                        <p class="input-box-text">Reescreva essa senha:</p>
+                        {% for error in form_logon.errors %}
+                            {% if error == "confirm_password" %}
+                                <p id="error_message">
+                                    {{form_logon.errors[error][0]}}
+                                </p>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                    {{form_logon.confirm_password(class="input-box-input")}}
                 </div>
                 <button id="button-logon" class="button" type="submit" name="button" value="logon">
                     Cadastrar
@@ -30,11 +47,11 @@
             <div class="auth-form">
                 <div class="input-box">
                     <p class="input-box-text">Qual seu nome?</p>
-                    {{form_login.username.label}}{{form_login.username(class="input-box-input")}}
+                    {{form_login.username(class="input-box-input")}}
                 </div>
                 <div class="input-box">
                     <p class="input-box-text">Qual sua senha?</p>
-                    {{form_login.username.label}}{{form_login.password(class="input-box-input")}}
+                    {{form_login.password(class="input-box-input")}}
                 </div>
                 <button id="button-login" class="button" type="submit" name="button" value="login">
                     Entrar
