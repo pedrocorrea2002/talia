@@ -10,7 +10,7 @@
                 <div class="input-box">
                     <div id="field_with_error">
                         <p class="input-box-text">Qual seu nome?</p>
-                        {% if exist_user %}
+                        {% if exist_user_logon %}
                             <p id="error_message">
                                 O usuário e senha informados já estão em uso!
                             </p>
@@ -46,7 +46,14 @@
             <p id="auth-title-login" class="auth-title">Já acessei antes</p>
             <div class="auth-form">
                 <div class="input-box">
-                    <p class="input-box-text">Qual seu nome?</p>
+                    <div id="field_with_error">
+                        <p class="input-box-text">Qual seu nome?</p>
+                        {% if exist_user_login == false %}
+                            <p id="error_message">
+                                Usuário e senha não encontrados!
+                            </p>
+                        {% endif %}
+                    </div>
                     {{form_login.username(class="input-box-input")}}
                 </div>
                 <div class="input-box">

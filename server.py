@@ -43,15 +43,20 @@ def home():
         user_folder = os.path.join("users",f"{logon_form.username.data}_{logon_form.password.data}")
 
         if(os.path.exists(os.path.join(user_folder))):
-            return render_template("home.html", form_logon=logon_form, form_login=login_form, exist_user=True)
+            return render_template("home.html", form_logon=logon_form, form_login=login_form, exist_user_logon=True,exist_user_login=True)
         else:
             os.mkdir(user_folder)
             return render_template("what_sample.html", user=user(logon_form.username.data,logon_form.password.data))
 
     elif request.method == 'POST' and request.form['button'] == "login"  and login_form.validate_on_submit():
-        pass
+        user_folder = os.path.join("users",f"{login_form.username.data}_{login_form.password.data}")
 
-    return render_template("home.html", form_logon=logon_form, form_login=login_form, exist_user=False)
+        if(os.path.exists(os.path.join(user_folder))):
+            return render_template("what_sample.html", user=user(login_form.username.data,login_form.password.data))
+        else:
+            return render_template("home.html", form_logon=logon_form, form_login=login_form, exist_user_logon=False,exist_user_login=False)
+
+    return render_template("home.html", form_logon=logon_form, form_login=login_form, exist_user_logon=False,exist_user_login=True)
 
 
 if __name__ == '__main__':
