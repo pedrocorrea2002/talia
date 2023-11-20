@@ -44,10 +44,13 @@ def home():
         if(os.path.exists(os.path.join(user_folder))):
             return render_template("home.html", form_logon=logon_form, form_login=login_form, exist_user_logon=True,exist_user_login=True)
         else:
+            #! FALTOU REMOVER ACENTOS E CARACTERES ESPECIAIS NO USUÁRIO E SENHA, PRA NÃO DAR PROBLEMA NO LINUX
+            #! FAZER O TRATAMENTO INVERSO, REMOVER TUDO QUE NÃO FOR NÚMERO OU LETRA
             os.mkdir(user_folder)
             return render_template("what_sample.html", user=user(logon_form.username.data,logon_form.password.data))
 
     elif request.method == 'POST' and request.form['button'] == "login"  and login_form.validate_on_submit():
+        #! A REMOÇÃO DE CARACTERES ESPECIAIS DEVE SER FEITA TAMBÉM AQUI, JÁ QUE O USUÁRIO NÃO ESTÁ CIENTE DESTE TRATAMENTO
         user_folder = os.path.join("users",f"{login_form.username.data}_{login_form.password.data}")
 
         if(os.path.exists(os.path.join(user_folder))):
