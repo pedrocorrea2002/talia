@@ -2,9 +2,8 @@
 
 from flask import Flask, render_template, request
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField
+from wtforms import StringField, PasswordField
 from wtforms.validators import InputRequired, EqualTo
-from flask_login import login_user
 import time
 import os
 
