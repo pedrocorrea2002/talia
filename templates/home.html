@@ -1,44 +1,45 @@
 {% extends 'main.html'%}
 {% block conteudo %}
     <div id="auth-body">
-        {{form.csrf_token}} <!-- É DITO QUE AUMENTA A SEGURANÇA -->
-        {{form.hidden_tag()}} <!-- ESSE AQUI OCULTA O TEXTO DE CIMA DENTRO DA TELA -->
-
-        <div id="auth-body-half-logon" class="auth-body-half">
+        <form id="auth-body-half-logon" class="auth-body-half" method="POST" action="{{url_for('home')}}">
+            {{form_logon.csrf_token}} <!-- É DITO QUE AUMENTA A SEGURANÇA -->
+            {{form_logon.hidden_tag()}} <!-- ESSE AQUI OCULTA O TEXTO DE CIMA DENTRO DA TELA -->
             <p id="auth-title-logon" class="auth-title">Primeiro acesso</p>
             <div class="auth-form">
                 <div class="input-box">
                     <p class="input-box-text">Qual seu nome?</p>
-                    {{form.username.label}}{{form.username(class="input-box-input")}}
+                    {{form_logon.username.label}}{{form_logon.username(class="input-box-input")}}
                 </div>
                 <div class="input-box">
                     <p class="input-box-text">Crie uma senha:</p>
-                    {{form.username.label}}{{form.password(class="input-box-input")}}
+                    {{form_logon.password.label}}{{form_logon.password(class="input-box-input")}}
                 </div>
                 <div class="input-box">
                     <p class="input-box-text">Reescreva essa senha:</p>
-                    {{form.username.label}}{{form.password(class="input-box-input")}}
+                    {{form_logon.confirm_password.label}}{{form_logon.confirm_password(class="input-box-input")}}
                 </div>
-                <div id="button-logon" class="button">
+                <button id="button-logon" class="button" type="submit" name="button" value="logon">
                     Cadastrar
-                </div>
+                </button>
             </div>
-        </div>
-        <div id="auth-body-half-login" class="auth-body-half">
+        </form>
+        <form id="auth-body-half-login" class="auth-body-half" method="POST" action="{{url_for('home')}}">
+            {{form_login.csrf_token}} <!-- É DITO QUE AUMENTA A SEGURANÇA -->
+            {{form_login.hidden_tag()}} <!-- ESSE AQUI OCULTA O TEXTO DE CIMA DENTRO DA TELA -->
             <p id="auth-title-login" class="auth-title">Já acessei antes</p>
             <div class="auth-form">
                 <div class="input-box">
                     <p class="input-box-text">Qual seu nome?</p>
-                    {{form.username.label}}{{form.username(class="input-box-input")}}
+                    {{form_login.username.label}}{{form_login.username(class="input-box-input")}}
                 </div>
                 <div class="input-box">
                     <p class="input-box-text">Qual sua senha?</p>
-                    {{form.username.label}}{{form.password(class="input-box-input")}}
+                    {{form_login.username.label}}{{form_login.password(class="input-box-input")}}
                 </div>
-                <div id="button-login" class="button">
+                <button id="button-login" class="button" type="submit" name="button" value="login">
                     Entrar
-                </div>
+                </button>
             </div>
-        </div>
+        </form>
     </div>
 {% endblock %}

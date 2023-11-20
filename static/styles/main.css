@@ -110,15 +110,18 @@ nav a {
 }
 
 .button{
-    height: 40px;
+    height: 50px;
     width: 200px;
 
+    font-size: 20px;
     font-weight: 700;
 
     border-radius: 15px;
     display: flex;
     justify-content: center;
     align-items: center;
+
+    background-color: transparent;
 }
 
 .button:hover{
@@ -126,9 +129,17 @@ nav a {
 }
 
 #button-logon{
+    border: solid 5px white;
+}
+
+#button-logon:hover{
     background-color: white;
 }
 
 #button-login{
+    border: solid 5px #ff9600;
+}
+
+#button-login:hover{
     background-color: #ff9600;
 }
