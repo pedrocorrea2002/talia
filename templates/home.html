@@ -26,7 +26,7 @@
                     <div id="field_with_error">
                         <p class="input-box-text">Reescreva essa senha:</p>
                         {% for error in form_logon.errors %}
-                            {% if error == "confirm_password" %}
+                            {% if error == "confirm_password" and form_logon.errors[error][0] == "As duas senhas precisam ser iguais!" %}
                                 <p id="error_message">
                                     {{form_logon.errors[error][0]}}
                                 </p>
@@ -43,6 +43,7 @@
         <form id="auth-body-half-login" class="auth-body-half" method="POST" action="{{url_for('home')}}">
             {{form_login.csrf_token}} <!-- É DITO QUE AUMENTA A SEGURANÇA -->
             {{form_login.hidden_tag()}} <!-- ESSE AQUI OCULTA O TEXTO DE CIMA DENTRO DA TELA -->
+            
             <p id="auth-title-login" class="auth-title">Já acessei antes</p>
             <div class="auth-form">
                 <div class="input-box">
