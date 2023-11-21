@@ -48,15 +48,16 @@ def home():
         user_hash = md5_conversor.hexdigest()
         md5_conversor.update(logon_form.username.data.encode('utf-8'))
         username_hash = md5_conversor.hexdigest()
+        final_hash = f"{username_hash}_{user_hash}"
 
-        user_folder = os.path.join("users",f"{username_hash}_{user_hash}")
+        user_folder = os.path.join("users",final_hash)
 
         #* SE A PASTA EXISTE É AVISADO QUE O USUÁRIO JÁ EXISTE, SE NÃO É CRIADO A NOVA PASTA
         if(os.path.exists(os.path.join(user_folder))):
             return render_template("home.html", form_logon=logon_form, form_login=login_form, exist_user_logon=True,exist_user_login=True)
         else:
             os.mkdir(user_folder)
-            return render_template("what_sample.html", user=user_hash)
+            return render_template("what_sample.html", user=user(login_form.username.data,user_hash))
 
     elif request.method == 'POST' and request.form['button'] == "login"  and login_form.validate_on_submit():
         #* CONVERTENDO O CONJUNTO username_password PARA MD5
@@ -67,16 +68,14 @@ def home():
         user_hash = md5_conversor.hexdigest()
         md5_conversor.update(login_form.username.data.encode('utf-8'))
         username_hash = md5_conversor.hexdigest()
+        final_hash = f"{username_hash}_{user_hash}"
 
-        print("user_hash: " + user_hash)
-        print("username_hash: " + username_hash)
-
-        user_folder = os.path.join("users",f"{username_hash}_{user_hash}")
+        user_folder = os.path.join("users",final_hash)
 
         #* SE A PASTA EXISTE O LOGIN É FEITO, SE ELA NÃO EXISTE O LOGIN É NEGADO
         if(os.path.exists(os.path.join(user_folder))):
             print(f"Seja bem vindo: {login_form.username.data}")
-            # return render_template("what_sample.html", user=user(login_form.username.data,login_form.password.data))
+            return render_template("what_sample.html", user=user(login_form.username.data,final_hash))
         else:
             return render_template("home.html", form_logon=logon_form, form_login=login_form, exist_user_logon=False,exist_user_login=False)
 
