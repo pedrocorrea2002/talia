@@ -1,10 +1,9 @@
 from flask import Flask, render_template, request, redirect, url_for
-from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField
-from wtforms.validators import InputRequired, EqualTo
 from flask_login import login_user, current_user, login_required, LoginManager
 import os
 import hashlib
+from utils.classes.userAuth_classes import UserAuthentication, UserRegistration
+from utils.classes.user import user
 
 abacate = Flask(__name__)
 abacate.config['SECRET_KEY'] = "secret"
@@ -17,32 +16,6 @@ login_manager.init_app(abacate)
 def load_user(user_id):
     username, password = user_id
     return user(username, password)
-
-class UserRegistration(FlaskForm):
-    username = StringField(label="", name="logon_username", validators=[InputRequired(message="Preenchimento obrigatório!")])
-    password = PasswordField(label="", name="logon_password", validators=[InputRequired(message="Preenchimento obrigatório!")])
-    confirm_password = PasswordField(label="logon_confirm_password", name="", validators=[
-        EqualTo('password',message="As duas senhas precisam ser iguais!"),
-        InputRequired(message="Preenchimento obrigatório!")
-    ])
-
-class UserAuthentication(FlaskForm):
-    username = StringField(label="", name="login_username", validators=[InputRequired(message="Preenchimento obrigatório!")])
-    password = PasswordField(label="", name="login_password", validators=[InputRequired(message="Preenchimento obrigatório!")])
-
-class user:
-    def __init__(self, username,password):
-        self.username = username
-        self.password = password
-
-    def is_active(self): #? PODERIA SER MAIS COMPLEXO, MAS EU FORCEI COMO TRUE, ESSA FUNÇÃO É CHAMADA PELO PRÓPRIO LoginManager DO flask_login
-        return True
-    
-    def get_id(self):
-        return (self.username,self.password)
-    
-    def is_authenticated(self): #? PODERIA SER MAIS COMPLEXO, MAS EU FORCEI COMO TRUE, ESSA FUNÇÃO É CHAMADA PELO PRÓPRIO LoginManager DO flask_login
-        return True
 
 @abacate.route("/")
 def main():
