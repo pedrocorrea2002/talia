@@ -14,6 +14,8 @@ login_manager.init_app(abacate)
 
 @login_manager.user_loader
 def load_user(user_id):
+    print("user_id")
+    print(user_id)
     username, password = user_id
     return user(username, password)
 
@@ -47,7 +49,7 @@ def home():
             return render_template("home.html", form_logon=logon_form, form_login=login_form, exist_user_logon=True,exist_user_login=True)
         else:
             os.mkdir(user_folder)
-            login_user(user(login_form.username.data,final_hash))
+            login_user(user(logon_form.username.data,final_hash))
             return redirect(url_for('main_buttons'))
 
     elif request.method == 'POST' and request.form['button'] == "login"  and login_form.validate_on_submit():
@@ -75,6 +77,8 @@ def home():
 @abacate.route("/main_buttons", methods=['GET'])
 @login_required
 def main_buttons():
+    print(current_user.password)
+
     return render_template("main_buttons.html", username=current_user.username, final_hash=current_user.password)
 
 if __name__ == '__main__':

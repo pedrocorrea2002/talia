@@ -34,7 +34,7 @@ header #upper {
 
 header #bottom {
     width: 100vw;
-    height: 25;
+    height: 25px;
     padding-left: 20px;
 
     display: flex;
@@ -178,14 +178,14 @@ nav a {
 
 /** TELA DOS BOTÕES */
 #welcome{
-    height: 25px;
+    height: 15px;
 
     font-weight: 700;
-    font-size: 25px;
+    font-size: 15px;
 }
 
 .main-half{
-    height: calc(100vh - 180px);
+    height: calc(100vh - 125px);
     width: 100%;
 }
 
@@ -195,12 +195,22 @@ nav a {
 
     border-radius: 25%;
     border: 5px solid black;
+
+    flex-direction: column;
+}
+
+.big-button:hover{
+    cursor: pointer;
+    opacity: 70%;
 }
 
 .big-button-icon{
-
+    width: 60%;
+    aspect-ratio: 1 / 1;
 }
 
 .big-button-title{
-
+    font-size: 140%;
 }
+
+/** GRAVADOR DE AMOSTRAS */
