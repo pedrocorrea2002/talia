@@ -1,5 +1,3 @@
-# unique id using Date.now() do javascript
-
 from flask import Flask, render_template, request
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField
@@ -84,3 +82,5 @@ def home():
 
 if __name__ == '__main__':
     abacate.run(debug=True)
+
+#^ IMPREMENTAÇÃO FUTURA, SALVAR username E password NOS COOKIES E FAZER LOGIN AUTOMÁTICO SE EXISTIREM ESSES DOIS NOS COOKIES
