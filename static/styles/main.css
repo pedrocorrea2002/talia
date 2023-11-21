@@ -214,3 +214,7 @@ nav a {
 }
 
 /** GRAVADOR DE AMOSTRAS */
+#recorder-form{
+    padding-left:20px;
+    padding-right: 200px;
+}

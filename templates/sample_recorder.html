@@ -1,5 +1,19 @@
 {% extends 'main logado.html'%}
 {% block conteudo %}
-    <p>Nova amostra</p>
-    <input/>
+<div id="auth-body">
+    <div id="recorder-form" class="main-half">
+        <div class="input-box">
+            <p class="input-box-text">Nome do sinal</p>
+            <input class="input-box-input"/>
+        </div>
+        <div class="input-box">
+            <p class="input-box-text">Número de amostras</p>
+            <input class="input-box-input"/>
+        </div>       
+    </div>
+    <div class="main-half centralize">
+        <img src="{{url_for('video_feed_'+current_user.password)}}"/>
+    </div>
+</div>
+
 {% endblock %}
