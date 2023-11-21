@@ -22,7 +22,10 @@ def main():
     return redirect(url_for('home'))
 
 @abacate.route("/home", methods=['GET','POST'])
-def home():
+def home():    
+    if(str(current_user)[:-37] != "<flask_login.mixins.AnonymousUs") :
+        return redirect(url_for("main_buttons"))
+
     logon_form = UserRegistration()
     login_form = UserAuthentication()
 
@@ -44,7 +47,8 @@ def home():
             return render_template("home.html", form_logon=logon_form, form_login=login_form, exist_user_logon=True,exist_user_login=True)
         else:
             os.mkdir(user_folder)
-            return render_template("what_sample.html", user=user(login_form.username.data,user_hash))
+            login_user(user(login_form.username.data,final_hash))
+            return redirect(url_for('main_buttons'))
 
     elif request.method == 'POST' and request.form['button'] == "login"  and login_form.validate_on_submit():
         #* CONVERTENDO O CONJUNTO username_password PARA MD5
@@ -62,19 +66,16 @@ def home():
         #* SE A PASTA EXISTE O LOGIN É FEITO, SE ELA NÃO EXISTE O LOGIN É NEGADO
         if(os.path.exists(os.path.join(user_folder))):
             login_user(user(login_form.username.data,final_hash))
-            return redirect(url_for('what_sample'))
+            return redirect(url_for('main_buttons'))
         else:
             return render_template("home.html", form_logon=logon_form, form_login=login_form, exist_user_logon=False,exist_user_login=False)
 
     return render_template("home.html", form_logon=logon_form, form_login=login_form, exist_user_logon=False,exist_user_login=True)
 
-@abacate.route("/what_sample", methods=['GET','POST'])
+@abacate.route("/main_buttons", methods=['GET'])
 @login_required
-def what_sample():
-    print("aqui4")
-    return render_template("what_sample.html", username=current_user.username, final_hash=current_user.password)
+def main_buttons():
+    return render_template("main_buttons.html", username=current_user.username, final_hash=current_user.password)
 
 if __name__ == '__main__':
     abacate.run(debug=True)
-
-#^ IMPREMENTAÇÃO FUTURA, SALVAR username E password NOS COOKIES E FAZER LOGIN AUTOMÁTICO SE EXISTIREM ESSES DOIS NOS COOKIES
