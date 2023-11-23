@@ -1,0 +1,26 @@
+{% extends 'main logado.html'%}
+{% block conteudo %}
+<div id="auth-body">    
+    <form id="recorder-form" class="main-half" method="POST" action="{{url_for('sample_recorder')}}">       
+        <div class="input-box">
+            <p class="input-box-text">Nome do sinal</p>
+            <input class="input-box-input" value="{{sample_name}}" disabled/>
+        </div>
+        <div class="input-box">
+            <p class="input-box-text">Número de amostras</p>
+            <input class="input-box-input" value="{{length}}" disabled/>
+        </div>
+        
+        <button class="play-button" type="submit">
+            <img class="big-button-icon" src="https://cdn3.iconfinder.com/data/icons/font-awesome-regular-1/512/circle-stop-256.png" />
+        </button>
+    </form>
+    <div class="main-half centralize">
+        <img 
+            class="video_screen"
+            src="{{url_for(f'video_feed_{hash}',folder_range=folder_range, length=length, sample_name=sample_name, hash=hash)}}"
+        />
+    </div>
+</div>
+
+{% endblock %}

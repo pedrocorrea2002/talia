@@ -2,15 +2,11 @@ from flask import Flask, render_template, request, redirect, url_for, Response
 from flask_login import login_user, current_user, login_required, LoginManager
 import os
 import hashlib
-import numpy as np
-import cv2
-import mediapipe as mp
 
-from utils.classes.userAuth_classes import UserAuthentication, UserRegistration
-from utils.classes.user import user
-from utils.functions import mediapipe_detection as md
-from utils.functions import draw_landmarks as dl
-from utils.functions import extract_keypoints as ek
+from static.utils.classes.userAuth_classes import UserAuthentication, UserRegistration
+from static.utils.classes.sample import SampleRecording
+from static.utils.classes.user import user
+from static.utils.recorder import recorder
 
 abacate = Flask(__name__)
 abacate.config["SECRET_KEY"] = "secret"
@@ -67,7 +63,7 @@ def home():
                 form_logon=logon_form,
                 form_login=login_form,
                 exist_user_logon=True,
-                exist_user_login=True,
+                exist_user_login=True
             )
         else:
             os.mkdir(user_folder)
@@ -114,7 +110,6 @@ def home():
         exist_user_login=True,
     )
 
-
 @abacate.route("/main_buttons", methods=["GET"])
 @login_required
 def main_buttons():
@@ -126,64 +121,59 @@ def main_buttons():
 @abacate.route("/sample_recorder", methods=["GET", "POST"])
 @login_required
 def sample_recorder():
-
-    return render_template("sample_recorder.html", username=current_user.username)
-
-
-def recorder():
-    cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
-
-    # Cores das barras das 5 palavras mais prováveis
-    colors = [
-        (245, 117, 16),
-        (117, 245, 16),
-        (16, 117, 245),
-        (50, 245, 50),
-        (150, 245, 150),
-    ]
-
-    no_sequences = 20
-    sequence_length = 30
-    action = "presunto"
-
-    # Variáveis do mediapipe
-    mp_holistic = (
-        mp.solutions.holistic
-    )  # Possui modelos de marcadores do corpo, mãos e rosto
-
-    with mp_holistic.Holistic(
-        min_detection_confidence=0.5, min_tracking_confidence=0.5
-    ) as holistic:
-        # Executa enquanto a webcam está ativa
-        while cap.isOpened():
-            # Coletando o conteúdo capturado pela câmera
-            # Frame é a imagem capturada em si
-            # ret é só um boooleano
-            ret, frame = cap.read()
-
-            for x in reversed(range(10)):
-                success, image = cap.read()
-                cv2.rectangle(image, (0, 0), (640, 40), (245, 117, 16), -1)
-                cv2.putText(image,f"Em {x} segundos: {action}",(15, 20),cv2.FONT_HERSHEY_SIMPLEX,
-                    0.5,(255, 255, 255),1,cv2.LINE_AA)
-
-                cv2.imshow("Captura", image)
-                cv2.waitKey(1000)
+    sample_form = SampleRecording()
+    
+    print(sample_form.validate_on_submit())
+    print(sample_form.errors)
+    
+    if(
+        request.method == "POST"
+        and sample_form.validate_on_submit()
+    ):
+        sample_name = sample_form.sample_name.data
+        length = sample_form.length.data
+        sample_folder = os.path.join("users",current_user.password,sample_name)
+        start_position = 0
+        
+        # VENDO SE O SINAL JÁ FOI GRAVADO POR ESSE MESMO USUÁRIO
+        if os.path.exists(sample_folder): #SE JÁ FOI GRAVADO
+            start_position = len(os.listdir(sample_folder))
+        else: #SE NÃO
+            os.mkdir(sample_folder) # CRIANDO PÁGINA DA AMOSTRA
             
-            for frame_num in range(sequence_length):
-                success, frame = cap.read()
+        folder_range = range(start_position+length*2)[start_position:]
+        
+        return redirect(url_for("sample_recording",folder_range=folder_range,hash=current_user.password, length=length, sample_name=sample_name))
+        
+    return render_template("sample_recorder.html", username=current_user.username, form_sample=sample_form)
 
-                (flag, encodedImage) = cv2.imencode(".jpg", frame)
-                if not flag:
-                    continue
-                yield(b'--frame\r\n' b'Content-Type: image/jpeg\r\n\r\n' +
-                    bytearray(encodedImage) + b'\r\n')
-
-@abacate.route("/video_feed/<current_user.password>")
+@abacate.route("/sample_recording_<hash>")
 @login_required
-def video_feed():
-     return Response(recorder(),
+def sample_recording(hash):
+    folder_range = request.args.get('folder_range')
+    length = request.args.get('length')
+    sample_name = request.args.get('sample_name')
+    
+    # desconectando o usuário se ele não for o mesmo usuário que está gravando
+    if hash != current_user.password :
+        return redirect(url_for("sample_recorder"))
+    
+    return render_template("sample_recording.html", username=current_user.username, folder_range=folder_range, length=length, sample_name=sample_name, hash=hash)
+
+@abacate.route("/video_feed_<hash>")
+@login_required
+def video_feed(hash):
+    folder_range = request.args.get('folder_range')
+    length = request.args.get('length')
+    sample_name = request.args.get('sample_name')
+    
+    return Response(recorder(hash,length,sample_name,folder_range),
           mimetype = "multipart/x-mixed-replace; boundary=frame")
 
 if __name__ == "__main__":
     abacate.run(debug=True)
+
+
+#^ IF THE skeleton IS SHOWING WILL BE A SESSION
+#^ IF THE SYSTEM IS RECORDING WILL BE A PAGE ITSELF (copy of the one where you write what sample is)
+#^ RENUMBER THE SAMPLES AFTER YOU DELETE ONE, TO KEEP ALL THEN STARTING ON 0 AND GOING UNTIL THE END WITHOUT MISSES
