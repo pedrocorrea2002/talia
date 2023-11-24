@@ -6,7 +6,8 @@ import hashlib
 from static.utils.classes.userAuth_classes import UserAuthentication, UserRegistration
 from static.utils.classes.sample import SampleRecording
 from static.utils.classes.user import user
-from static.utils.recorder import recorder
+from static.utils.functions.recorder import recorder
+from static.utils.functions.renomeador_de_pastas import renomeador_de_pastas
 
 abacate = Flask(__name__)
 abacate.config["SECRET_KEY"] = "secret"
@@ -136,12 +137,16 @@ def sample_recorder():
         start_position = 0
         
         # VENDO SE O SINAL JÁ FOI GRAVADO POR ESSE MESMO USUÁRIO
-        if os.path.exists(sample_folder): #SE JÁ FOI GRAVADO
-            start_position = len(os.listdir(sample_folder))
+        if os.path.exists(os.path.join(sample_folder,"normal")): #SE JÁ FOI GRAVADO
+            start_position = len(os.listdir(os.path.join(sample_folder,"normal")))
         else: #SE NÃO
             os.mkdir(sample_folder) # CRIANDO PÁGINA DA AMOSTRA
+
+        # renomeando as amostras já existentes
+        renomeador_de_pastas(current_user.password,sample_name)
             
         folder_range = range(start_position+length*2)[start_position:]
+        #folder_range = f'{folder_range[0]}-{folder_range[-1]}'
         
         return redirect(url_for("sample_recording",folder_range=folder_range,hash=current_user.password, length=length, sample_name=sample_name))
         
@@ -163,15 +168,22 @@ def sample_recording(hash):
 @abacate.route("/video_feed_<hash>")
 @login_required
 def video_feed(hash):
+    # desconectando o usuário se ele não for o mesmo usuário que está gravando
+    if hash != current_user.password :
+        return redirect(url_for("sample_recorder"))
+    
     folder_range = request.args.get('folder_range')
+    folder_range = folder_range.replace('range(','').replace(')','').split(',')
+    folder_range = range(int(folder_range[0]),int(folder_range[1]))
+
     length = request.args.get('length')
     sample_name = request.args.get('sample_name')
     
-    return Response(recorder(hash,length,sample_name,folder_range),
+    return Response(recorder(hash,int(length),sample_name,folder_range),
           mimetype = "multipart/x-mixed-replace; boundary=frame")
 
 if __name__ == "__main__":
-    abacate.run(debug=True)
+    abacate.run(host="0.0.0.0",port=5000,debug=False)
 
 
 #^ IF THE skeleton IS SHOWING WILL BE A SESSION

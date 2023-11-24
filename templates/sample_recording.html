@@ -18,7 +18,7 @@
     <div class="main-half centralize">
         <img 
             class="video_screen"
-            src="{{url_for(f'video_feed_{hash}',folder_range=folder_range, length=length, sample_name=sample_name, hash=hash)}}"
+            src="{{url_for('video_feed',hash=hash,folder_range=folder_range,length=length,sample_name=sample_name)}}"
         />
     </div>
 </div>
