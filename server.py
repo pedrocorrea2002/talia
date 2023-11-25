@@ -168,7 +168,10 @@ def sample_recording(hash):
     
     print("aaa")
     
-    return render_template("sample_recording.html", username=current_user.username, folder_range=folder_range, length=length, sample_name=sample_name, hash=hash)
+    try:
+        return render_template("sample_recording.html", username=current_user.username, folder_range=folder_range, length=length, sample_name=sample_name, hash=hash)
+    except:
+        return redirect(url_for("sample_recorder"))
 
 @abacate.route("/video_feed_<hash>")
 @login_required
@@ -179,15 +182,12 @@ def video_feed(hash):
     
     folder_range = request.args.get('folder_range')
     folder_range = folder_range.replace('range(','').replace(')','').split(',')
-    folder_range = range(int(folder_range[0]),int(folder_range[1]))
+    folder_range = list(range(int(folder_range[0]),int(folder_range[1])))
 
-    length = request.args.get('length')
     sample_name = request.args.get('sample_name')
 
-    print("video_feed")
-    
     return Response(recorder(hash,sample_name,folder_range),
-          mimetype = "multipart/x-mixed-replace; boundary=frame")
+        mimetype = "multipart/x-mixed-replace; boundary=frame")
 
 if __name__ == "__main__":
     abacate.run(host="0.0.0.0",port=5000,debug=True)
