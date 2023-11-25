@@ -130,3 +130,16 @@ def recorder(hash, action, folder_range):
             if flag:
                 yield(b'--frame\r\n' b'Content-Type: image/jpeg\r\n\r\n' +
                     bytearray(encodedImage) + b'\r\n')
+                
+
+
+#^ EM ALGUNS CASOS SE É DADO F5 NA PÁGINA DO GRAVADOR ELE DÁ O ERRO
+'''
+  File "C:\Users\pedro\OneDrive\Documentos\Python\teste_flask\static\utils\functions\recorder.py", line 82, in recorder
+    image_h_v, results_h_v = md.mediapipe_detection(frame, holistic) #amostras originais
+  File "C:\Users\pedro\OneDrive\Documentos\Python\teste_flask\static\utils\functions\mediapipe_detection.py", line 5, in mediapipe_detection
+    image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)  # converte a imagem do esquema de cores BGR para o esquema RGB
+cv2.error: OpenCV(4.8.1) D:\a\opencv-python\opencv-python\opencv\modules\imgproc\src\color.cpp:182: error: (-215:Assertion failed) !_src.empty() in function 'cv::cvtColor'
+'''
+
+#^ O celular pega a camera do pc, se eu entro no gravador pelo celular
