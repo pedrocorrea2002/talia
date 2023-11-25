@@ -7,14 +7,10 @@ from static.utils.functions import mediapipe_detection as md
 from static.utils.functions import draw_landmarks as dl
 from static.utils.functions import extract_keypoints as ek
 
-def recorder(hash, no_sequences, action, folder_range):
+def recorder(hash, action, folder_range):
     cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
     ACTION_PATH = os.path.join("users",hash,action)
     
-    if os.path.exists(os.path.join(ACTION_PATH,"normal")) == False:
-        os.mkdir(os.path.join(ACTION_PATH,"normal"))
-        os.mkdir(os.path.join(ACTION_PATH,"virado"))
-
     sequence_length = 30
 
     # Variáveis do mediapipe
@@ -25,6 +21,7 @@ def recorder(hash, no_sequences, action, folder_range):
     with mp_holistic.Holistic(
         min_detection_confidence=0.5, min_tracking_confidence=0.5
     ) as holistic:
+        
         # Executa enquanto a webcam está ativa
         while cap.isOpened():
             # Coletando o conteúdo capturado pela câmera
@@ -53,8 +50,11 @@ def recorder(hash, no_sequences, action, folder_range):
                       
                     for sequence in folder_range:
                         #* CRIANDO PASTA DA AMOSTRA
-                        os.mkdir(os.path.join(ACTION_PATH,"normal",str(sequence)))
-                        os.mkdir(os.path.join(ACTION_PATH,"virado",str(sequence)))
+                        try:
+                            os.mkdir(os.path.join(ACTION_PATH,"normal",str(sequence)))
+                            os.mkdir(os.path.join(ACTION_PATH,"virado",str(sequence)))
+                        except:
+                            redirect(url_for("sample_recorder",erro="criar_sequencia"))
                         
                         for frame_num in range(sequence_length):
                             success, frame = cap.read()
@@ -99,3 +99,15 @@ def recorder(hash, no_sequences, action, folder_range):
                                 bytearray(encodedImage) + b'\r\n')
                             
                     redirect(url_for("sample_recorder"))
+
+        if cap.isOpened() == False:
+                black_image = np.zeros((450,640,3), np.uint8)
+
+                cv2.rectangle(black_image, (0, 0), (640, 40), (245, 117, 16), -1)
+                cv2.putText(black_image, f'CAMERA NAO DETECTADA', (15, 20),
+                cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 1, cv2.LINE_AA)
+
+                (flag, encodedImage) = cv2.imencode(".jpg", black_image)
+                if flag:
+                    yield(b'--frame\r\n' b'Content-Type: image/jpeg\r\n\r\n' +
+                        bytearray(encodedImage) + b'\r\n')

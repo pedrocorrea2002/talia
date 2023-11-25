@@ -207,7 +207,7 @@ nav a {
 }
 
 .big-button-icon{
-    max-width: 60%;
+    width: 60%;
     aspect-ratio: 1 / 1;
 }
 
@@ -217,21 +217,34 @@ nav a {
 
 /** GRAVADOR DE AMOSTRAS */
 #recorder-form{
-    max-width: 50vw;
-
+    height: min-content;
+    max-width: calc(100vw - 20px);
     padding-left:20px;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    
 }
 
-.video_screen{
-    min-width: calc(100% - 40px);
+.video_box{
+    min-width: calc(100vw - 60px);
     min-height: calc(100% - 40px);
 
     background-color: black;
 }
 
+.video_screen{
+    max-height: 100%;
+    aspect-ratio: 1/1;
+}
+
 .play-button{
-    max-height: 40%;
-    max-width: 100%;
+    position: absolute;
+    z-index: 10;
+
+    height: 25vw;
+    width: 25vw;
 
     border: 0px none;
     background-color: transparent;
@@ -242,4 +255,17 @@ nav a {
 .play-button:hover{
     cursor: pointer;
     opacity: 80%;
+}
+
+.stop-button{
+    opacity: 0%;
+}
+
+.input-box-recorder{
+    width: calc(50% - 200px);
+    margin-bottom: 15px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: start;
 }

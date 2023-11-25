@@ -2,19 +2,28 @@
 
 import os
 
-def renomeador_de_pastas(hash,action):
-    DATA_PATH = os.path.join('users',hash,action,"normal")
+def renomeador_de_pastas(hash,pasta,action):
+    DATA_PATH = os.path.join('users',hash,action,pasta)
     nro_inicio = 0
 
-    for amostra in os.listdir(os.path.join(DATA_PATH)) :
-        amostra_pasta = os.path.join(DATA_PATH,str(amostra))
-        amostra_novoNome = os.path.join(DATA_PATH,str(nro_inicio))
+    if os.path.exists(DATA_PATH):
+        for amostra in os.listdir(os.path.join(DATA_PATH)) :
+            amostra_pasta = os.path.join(DATA_PATH,str(amostra))
+            amostra_novoNome = os.path.join(DATA_PATH,f"quase_{nro_inicio}")
 
-        os.rename(amostra_pasta, amostra_novoNome)
+            os.rename(amostra_pasta, amostra_novoNome)
+            nro_inicio = nro_inicio + 1
 
-        amostra_pasta = os.path.join('users',hash,action,"virado",str(amostra))
-        amostra_novoNome = os.path.join('users',hash,action,"virado",str(nro_inicio))
+            print("em cima: " + amostra_novoNome)
 
-        os.rename(amostra_pasta, amostra_novoNome)
+        nro_inicio = 0
 
-        nro_inicio = nro_inicio + 1
+        for amostra in os.listdir(os.path.join(DATA_PATH)) :
+            amostra_pasta = os.path.join(DATA_PATH,str(amostra))
+            amostra_novoNome = os.path.join(DATA_PATH,str(nro_inicio))
+
+            os.rename(amostra_pasta, amostra_novoNome)
+            nro_inicio = nro_inicio + 1
+
+            print("em baixo: " + amostra_novoNome)
+        

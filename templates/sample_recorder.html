@@ -1,26 +1,27 @@
 {% extends 'main logado.html'%}
 {% block conteudo %}
 <div id="auth-body">    
-    <form id="recorder-form" class="main-half" method="POST" action="{{url_for('sample_recorder')}}">
+    <form class="main-half" method="POST" action="{{url_for('sample_recorder')}}">
         {{form_sample.csrf_token}} <!-- É DITO QUE AUMENTA A SEGURANÇA -->
         {{form_sample.hidden_tag()}} <!-- ESSE AQUI OCULTA O TEXTO DE CIMA DENTRO DA TELA -->
         
-        <div class="input-box">
-            <p class="input-box-text">Nome do sinal</p>
-            {{form_sample.sample_name(class="input-box-input")}}
+        <div id="recorder-form" class="main-half centralize">
+            <div class="input-box-recorder">
+                <p class="input-box-text">Nome do sinal</p>
+                {{form_sample.sample_name(class="input-box-input")}}
+            </div>
+            <div class="input-box-recorder">
+                <p class="input-box-text">Número de amostras</p>
+                {{form_sample.length(class="input-box-input")}}
+            </div>  
         </div>
-        <div class="input-box">
-            <p class="input-box-text">Número de amostras</p>
-            {{form_sample.length(class="input-box-input")}}
+        <div class="main-half centralize">
+            <button class="play-button" type="submit">
+                <img class="big-button-icon" src="https://cdn4.iconfinder.com/data/icons/round-buttons/128/red_play.png" />
+            </button>
+            <div class="video_box"></div>
         </div>
-        
-        <button class="play-button" type="submit">
-            <img class="big-button-icon" src="https://cdn3.iconfinder.com/data/icons/google-material-design-icons/48/ic_play_circle_fill_48px-256.png" />
-        </button>
     </form>
-    <div class="main-half centralize">
-        <div class="video_screen"></div>
-    </div>
 </div>
 
 {% endblock %}

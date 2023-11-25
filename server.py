@@ -127,26 +127,27 @@ def sample_recorder():
     print(sample_form.validate_on_submit())
     print(sample_form.errors)
     
-    if(
-        request.method == "POST"
-        and sample_form.validate_on_submit()
-    ):
+    if(request.method == "POST" and sample_form.validate_on_submit()):
         sample_name = sample_form.sample_name.data
         length = sample_form.length.data
         sample_folder = os.path.join("users",current_user.password,sample_name)
         start_position = 0
         
         # VENDO SE O SINAL JÁ FOI GRAVADO POR ESSE MESMO USUÁRIO
-        if os.path.exists(os.path.join(sample_folder,"normal")): #SE JÁ FOI GRAVADO
+        if os.path.exists(os.path.join(sample_folder)): #SE JÁ FOI GRAVADO
             start_position = len(os.listdir(os.path.join(sample_folder,"normal")))
         else: #SE NÃO
             os.mkdir(sample_folder) # CRIANDO PÁGINA DA AMOSTRA
+            os.mkdir(os.path.join(sample_folder,"normal"))
+            os.mkdir(os.path.join(sample_folder,"virado"))
+
+        print("atum")
 
         # renomeando as amostras já existentes
-        renomeador_de_pastas(current_user.password,sample_name)
+        renomeador_de_pastas(current_user.password,"normal",sample_name)
+        renomeador_de_pastas(current_user.password,"virado",sample_name)
             
         folder_range = range(start_position+length*2)[start_position:]
-        #folder_range = f'{folder_range[0]}-{folder_range[-1]}'
         
         return redirect(url_for("sample_recording",folder_range=folder_range,hash=current_user.password, length=length, sample_name=sample_name))
         
@@ -159,9 +160,13 @@ def sample_recording(hash):
     length = request.args.get('length')
     sample_name = request.args.get('sample_name')
     
+    print("bbb")
+
     # desconectando o usuário se ele não for o mesmo usuário que está gravando
     if hash != current_user.password :
         return redirect(url_for("sample_recorder"))
+    
+    print("aaa")
     
     return render_template("sample_recording.html", username=current_user.username, folder_range=folder_range, length=length, sample_name=sample_name, hash=hash)
 
@@ -178,12 +183,14 @@ def video_feed(hash):
 
     length = request.args.get('length')
     sample_name = request.args.get('sample_name')
+
+    print("video_feed")
     
-    return Response(recorder(hash,int(length),sample_name,folder_range),
+    return Response(recorder(hash,sample_name,folder_range),
           mimetype = "multipart/x-mixed-replace; boundary=frame")
 
 if __name__ == "__main__":
-    abacate.run(host="0.0.0.0",port=5000,debug=False)
+    abacate.run(host="0.0.0.0",port=5000,debug=True)
 
 
 #^ IF THE skeleton IS SHOWING WILL BE A SESSION
