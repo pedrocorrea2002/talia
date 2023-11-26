@@ -3,59 +3,11 @@
   <head>
     <meta charset="utf-8">
     <title>Captura de imagens da câmera</title>
-    <link href="example.js">
+    <script src="teste.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision/vision_bundle.js"
+    crossorigin="anonymous" defer></script>
   </head>
   <body>
-    <div id="video-container" style="height: 1000px;width: 1000px;" ></div>
-    <script>
-      var videoContainer = document.querySelector('#video-container');
-      var canvas = document.createElement('canvas');
-      var context = canvas.getContext('2d');
-
-      navigator.mediaDevices.getUserMedia({ video: true })
-        .then(function (stream) {
-          var video = document.createElement('video');
-          video.srcObject = stream;
-          video.play();
-          amostras = []
-          frames = []
-
-          setInterval(function () {
-            // PEGANDO IMAGEM
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
-            context.drawImage(video, 0, 0, canvas.width, canvas.height);
-            var imageData = context.getImageData(0, 0, video.videoWidth, video.videoHeight);
-            var data = imageData.data;
-            
-            videoContainer.style.backgroundImage = 'url(' + canvas.toDataURL() + ')';
-            
-            // CONVERTENDO ESSA IMAGEM PARA UMA MATRIZ DE PIXELS
-            var matrizPixels = [];
-            for (var i = 0; i < video.videoHeight; i++) {
-              var linha = [];
-              for (var j = 0; j < video.videoWidth; j++) {  1 * 4
-                var index = (i * video.videoWidth + j) * 4; // Cada pixel tem 4 componentes (R, G, B, A)     
-                var pixel = [data[index], data[index + 1], data[index + 2], data[index + 3]];
-                linha.push(pixel);
-              }
-              matrizPixels.push(linha);
-            }
-
-            // JOGANDO ESSA MATRIZ EM UMA LISTA DE FRAMES
-            frames.push(matrizPixels)
-
-            // QUANDO ESSA LISTA TIVER 30 FRAMES, ESSA IMAGEM É JOGADA NA LISTA DE FRAMES
-            if(frames.length == 30){
-              amostras.push(frames)
-              frames = []
-            }
-          
-          }, 1000,15);
-        })
-        .catch(function (err) {
-          console.log('Ocorreu um erro: ' + err.name + ': ' + err.message);
-        });
-    </script>
+    <div id="video-container" style="height: 1000px;width: 1000px;"></div>
   </body>
 </html>

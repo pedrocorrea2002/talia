@@ -1,29 +1,96 @@
 {% extends 'main logado.html'%}
 {% block conteudo %}
-<div id="auth-body">    
+<div id="auth-body">
     <form class="main-half" method="POST" action="{{url_for('sample_recorder')}}">
         <div id="recorder-form" class="main-half centralize">
             <div class="input-box-recorder">
                 <p class="input-box-text">Nome do sinal</p>
-                <input class="input-box-input" value="{{sample_name}}" disabled/>
+                <input class="input-box-input" value="{{sample_name}}" disabled />
             </div>
             <div class="input-box-recorder">
                 <p class="input-box-text">Número de amostras</p>
-                <input class="input-box-input" value="{{length}}" disabled/>
-            </div>  
+                <input class="input-box-input" value="{{length}}" disabled />
+            </div>
         </div>
         <div class="main-half centralize">
             <button class="play-button stop-button" type="submit">
-                <img class="big-button-icon" src="https://cdn2.iconfinder.com/data/icons/flat-style-svg-icons-part-1/512/stop_button_play-256.png" />
+                <img class="big-button-icon"
+                    src="https://cdn2.iconfinder.com/data/icons/flat-style-svg-icons-part-1/512/stop_button_play-256.png" />
             </button>
             <div class="video_box">
-                <img 
-                    class="video_screen"
-                    src="{{url_for('video_feed',hash=hash,folder_range=folder_range,length=length,sample_name=sample_name)}}"
-                />
-            </div>
+                <img id="video-container" class="video_screen"/>
+           </div>
         </div>
     </form>
+
+    <script>
+        //* ESCUTANDO VÍDEO
+        const videoContainer = document.querySelector('#video-container');
+        var canvas = document.createElement('canvas');
+        var context = canvas.getContext('2d');
+
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then(function (stream) {
+                var video = document.createElement('video');
+                video.srcObject = stream;
+                video.play();
+
+                amostras = []
+                frames = []
+
+                //* PEGANDO FRAMES E CONVERTENDO EM UMA MATRIZ DE PIXELS
+                setInterval(function () {
+                    //* PEGANDO IMAGEM
+                    canvas.width = video.videoWidth;
+                    canvas.height = video.videoHeight;
+                    context.drawImage(video, 0, 0, canvas.width, canvas.height);
+                    var imageData = context.getImageData(0, 0, video.videoWidth, video.videoHeight);
+                    var data = imageData.data;
+
+                    videoContainer.src = canvas.toDataURL();
+
+                    //* CONVERTENDO ESSA IMAGEM PARA UMA MATRIZ DE PIXELS
+                    var matrizPixels = [];
+                    for (var i = 0; i < video.videoHeight; i++) {
+                        var linha = [];
+                        for (var j = 0; j < video.videoWidth; j++) {
+                            1 * 4
+                            var index = (i * video.videoWidth + j) * 4; // Cada pixel tem 4 componentes (R, G, B, A)     
+                            var pixel = [data[index], data[index + 1], data[index + 2], data[index + 3]];
+                            linha.push(pixel);
+                        }
+                        matrizPixels.push(linha);
+                    }
+
+                    console.log(`${amostras.length} -- ${frames.length}`)
+
+                    //* JOGANDO ESSA MATRIZ EM UMA LISTA DE FRAMES
+                    frames.push(matrizPixels)
+
+                    //* QUANDO ESSA LISTA TIVER 30 FRAMES, ESSA IMAGEM É JOGADA NA LISTA DE FRAMES
+                    if (frames.length == 30) {
+                        amostras.push(frames)
+                        frames = []
+                    }
+
+                }, 1000 / 15);
+
+                if(amostras.length == $(length)){
+                    fetch(`sample_recording_${$(hash)}`,{
+                        method:"POST",
+                        body:JSON.stringify(amostras),
+                        headers: {
+                            "Content-type": "application/json; charset=UTF-8"
+                        }
+                    })
+
+                    window.location.replace('sample_recorder')
+                }
+            })
+            .catch(function (err) {
+                console.log('Ocorreu um erro: ' + err.name + ': ' + err.message);
+            });
+    </script>
 </div>
 
 {% endblock %}

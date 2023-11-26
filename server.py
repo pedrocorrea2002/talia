@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for, Response
 from flask_login import login_user, current_user, login_required, LoginManager
 import os
 import hashlib
+import json
 
 from static.utils.classes.userAuth_classes import UserAuthentication, UserRegistration
 from static.utils.classes.sample import SampleRecording
@@ -19,8 +20,6 @@ login_manager.init_app(abacate)
 
 @login_manager.user_loader
 def load_user(user_id):
-    print("user_id")
-    print(user_id)
     username, password = user_id
     return user(username, password)
 
@@ -114,8 +113,6 @@ def home():
 @abacate.route("/main_buttons", methods=["GET"])
 @login_required
 def main_buttons():
-    print(current_user.password)
-
     return render_template("main_buttons.html", username=current_user.username)
 
 
@@ -141,8 +138,6 @@ def sample_recorder():
             os.mkdir(os.path.join(sample_folder,"normal"))
             os.mkdir(os.path.join(sample_folder,"virado"))
 
-        print("atum")
-
         # renomeando as amostras já existentes
         renomeador_de_pastas(current_user.password,"normal",sample_name)
         renomeador_de_pastas(current_user.password,"virado",sample_name)
@@ -156,22 +151,20 @@ def sample_recorder():
 @abacate.route("/sample_recording_<hash>")
 @login_required
 def sample_recording(hash):
-    folder_range = request.args.get('folder_range')
-    length = request.args.get('length')
-    sample_name = request.args.get('sample_name')
-    
-    print("bbb")
-
     # desconectando o usuário se ele não for o mesmo usuário que está gravando
     if hash != current_user.password :
         return redirect(url_for("sample_recorder"))
     
-    print("aaa")
-    
-    try:
+    if request.method == "GET":
+        folder_range = request.args.get('folder_range')
+        length = request.args.get('length')
+        sample_name = request.args.get('sample_name')
+
         return render_template("sample_recording.html", username=current_user.username, folder_range=folder_range, length=length, sample_name=sample_name, hash=hash)
-    except:
-        return redirect(url_for("sample_recorder"))
+    else:
+        samples = json.loads(request.data)
+
+        print("samples: " + samples)
 
 @abacate.route("/video_feed_<hash>")
 @login_required
