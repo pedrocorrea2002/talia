@@ -141,5 +141,3 @@ def recorder(hash, action, folder_range):
 #     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)  # converte a imagem do esquema de cores BGR para o esquema RGB
 # cv2.error: OpenCV(4.8.1) D:\a\opencv-python\opencv-python\opencv\modules\imgproc\src\color.cpp:182: error: (-215:Assertion failed) !_src.empty() in function 'cv::cvtColor'
 #
-
-#^ O celular pega a camera do pc, se eu entro no gravador pelo celular

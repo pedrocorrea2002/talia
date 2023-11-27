@@ -1,9 +1,3 @@
-/**
- * Skipped minification because the original files appears to be already minified.
- * Original file: /npm/@mediapipe/tasks-vision@0.10.0/vision_bundle.js
- *
- * Do NOT use SRI with dynamically generated files! More information: https://www.jsdelivr.com/using-sri-with-dynamic-files
- */
 var commonjsGlobal = "undefined" != typeof globalThis ? globalThis : "undefined" != typeof window ? window : "undefined" != typeof global ? global : "undefined" != typeof self ? self : {}
   , vision = {}
   , fileset_resolver = {};
@@ -284,7 +278,8 @@ Object.defineProperty(image, "__esModule", {
     value: !0
 }),
 image.MPImage = void 0;
-const image_shader_context_1$2 = image_shader_context;
+const image_shader_context_1$2 = image_shader_context
+  , INSTANCE_COUNT_WARNING_THRESHOLD$1 = 250;
 var MPImageType;
 !function(e) {
     e[e.IMAGE_DATA = 0] = "IMAGE_DATA",
@@ -299,7 +294,9 @@ class MPImage$1 {
         this.canvas = o,
         this.shaderContext = i,
         this.width = a,
-        this.height = n
+        this.height = n,
+        (this.ownsImageBitmap || this.ownsWebGLTexture) && (--MPImage$1.instancesBeforeWarning,
+        0 === MPImage$1.instancesBeforeWarning && console.error("You seem to be creating MPImage instances without invoking .close(). This leaks resources."))
     }
     hasImageData() {
         return !!this.getContainer(MPImageType.IMAGE_DATA)
@@ -344,7 +341,9 @@ class MPImage$1 {
                 r = (0,
                 image_shader_context_1$2.assertNotNull)(e.createTexture(), "Failed to create texture"),
                 e.bindTexture(e.TEXTURE_2D, r),
+                this.configureTextureParams(),
                 e.texImage2D(e.TEXTURE_2D, 0, e.RGBA, this.width, this.height, 0, e.RGBA, e.UNSIGNED_BYTE, null),
+                e.bindTexture(e.TEXTURE_2D, null),
                 t.bindFramebuffer(e, r),
                 t.run(e, !1, (()=>{
                     this.bindTexture(),
@@ -418,20 +417,24 @@ class MPImage$1 {
         }
         return e
     }
+    configureTextureParams() {
+        const e = this.getGL();
+        e.texParameteri(e.TEXTURE_2D, e.TEXTURE_WRAP_S, e.CLAMP_TO_EDGE),
+        e.texParameteri(e.TEXTURE_2D, e.TEXTURE_WRAP_T, e.CLAMP_TO_EDGE),
+        e.texParameteri(e.TEXTURE_2D, e.TEXTURE_MIN_FILTER, e.LINEAR),
+        e.texParameteri(e.TEXTURE_2D, e.TEXTURE_MAG_FILTER, e.LINEAR)
+    }
     bindTexture() {
         const e = this.getGL();
         e.viewport(0, 0, this.width, this.height),
         e.activeTexture(e.TEXTURE0);
         let t = this.getContainer(MPImageType.WEBGL_TEXTURE);
-        return t || (t = (0,
+        return t ? e.bindTexture(e.TEXTURE_2D, t) : (t = (0,
         image_shader_context_1$2.assertNotNull)(e.createTexture(), "Failed to create texture"),
         this.containers.push(t),
-        this.ownsWebGLTexture = !0),
+        this.ownsWebGLTexture = !0,
         e.bindTexture(e.TEXTURE_2D, t),
-        e.texParameteri(e.TEXTURE_2D, e.TEXTURE_WRAP_S, e.CLAMP_TO_EDGE),
-        e.texParameteri(e.TEXTURE_2D, e.TEXTURE_WRAP_T, e.CLAMP_TO_EDGE),
-        e.texParameteri(e.TEXTURE_2D, e.TEXTURE_MIN_FILTER, e.LINEAR),
-        e.texParameteri(e.TEXTURE_2D, e.TEXTURE_MAG_FILTER, e.LINEAR),
+        this.configureTextureParams()),
         t
     }
     unbindTexture() {
@@ -469,15 +472,33 @@ class MPImage$1 {
         this.ownsWebGLTexture) {
             this.getGL().deleteTexture(this.getContainer(MPImageType.WEBGL_TEXTURE))
         }
+        MPImage$1.instancesBeforeWarning = -1
     }
 }
-image.MPImage = MPImage$1;
-var mask = {};
+image.MPImage = MPImage$1,
+MPImage$1.instancesBeforeWarning = INSTANCE_COUNT_WARNING_THRESHOLD$1;
+var mask = {}
+  , platform_utils = {};
+function isWebKit(e=navigator) {
+    const t = e.userAgent;
+    return t.includes("Safari") && !t.includes("Chrome")
+}
+function isIOS() {
+    return ["iPad Simulator", "iPhone Simulator", "iPod Simulator", "iPad", "iPhone", "iPod"].includes(navigator.platform) || navigator.userAgent.includes("Mac") && "ontouchend"in document
+}
+Object.defineProperty(platform_utils, "__esModule", {
+    value: !0
+}),
+platform_utils.isIOS = platform_utils.isWebKit = void 0,
+platform_utils.isWebKit = isWebKit,
+platform_utils.isIOS = isIOS,
 Object.defineProperty(mask, "__esModule", {
     value: !0
 }),
 mask.MPMask = void 0;
-const image_shader_context_1$1 = image_shader_context;
+const image_shader_context_1$1 = image_shader_context
+  , platform_utils_1$1 = platform_utils
+  , INSTANCE_COUNT_WARNING_THRESHOLD = 250;
 var MPMaskType;
 !function(e) {
     e[e.UINT8_ARRAY = 0] = "UINT8_ARRAY",
@@ -491,7 +512,9 @@ class MPMask$1 {
         this.canvas = r,
         this.shaderContext = o,
         this.width = i,
-        this.height = a
+        this.height = a,
+        this.ownsWebGLTexture && (--MPMask$1.instancesBeforeWarning,
+        0 === MPMask$1.instancesBeforeWarning && console.error("You seem to be creating MPMask instances without invoking .close(). This leaks resources."))
     }
     hasUint8Array() {
         return !!this.getContainer(MPMaskType.UINT8_ARRAY)
@@ -510,6 +533,18 @@ class MPMask$1 {
     }
     getAsWebGLTexture() {
         return this.convertToWebGLTexture()
+    }
+    getTexImage2DFormat() {
+        const e = this.getGL();
+        if (!MPMask$1.texImage2DFormat)
+            if (e.getExtension("EXT_color_buffer_float") && e.getExtension("OES_texture_float_linear") && e.getExtension("EXT_float_blend"))
+                MPMask$1.texImage2DFormat = e.R32F;
+            else {
+                if (!e.getExtension("EXT_color_buffer_half_float"))
+                    throw new Error("GPU does not fully support 4-channel float32 or float16 formats");
+                MPMask$1.texImage2DFormat = e.R16F
+            }
+        return MPMask$1.texImage2DFormat
     }
     getContainer(e) {
         switch (e) {
@@ -541,7 +576,9 @@ class MPMask$1 {
                     r = (0,
                     image_shader_context_1$1.assertNotNull)(e.createTexture(), "Failed to create texture"),
                     e.bindTexture(e.TEXTURE_2D, r),
-                    e.texImage2D(e.TEXTURE_2D, 0, e.R32F, this.width, this.height, 0, e.RED, e.FLOAT, null),
+                    this.configureTextureParams();
+                    const o = this.getTexImage2DFormat();
+                    e.texImage2D(e.TEXTURE_2D, 0, o, this.width, this.height, 0, e.RED, e.FLOAT, null),
                     e.bindTexture(e.TEXTURE_2D, null),
                     t.bindFramebuffer(e, r),
                     t.run(e, !1, (()=>{
@@ -562,12 +599,10 @@ class MPMask$1 {
     }
     getGL() {
         if (!this.canvas)
-            throw new Error("Conversion to different image formats require that a canvas is passed when iniitializing the image.");
-        this.gl || (this.gl = (0,
-        image_shader_context_1$1.assertNotNull)(this.canvas.getContext("webgl2"), "You cannot use a canvas that is already bound to a different type of rendering context."));
-        if (!this.gl.getExtension("EXT_color_buffer_float"))
-            throw new Error("Missing required EXT_color_buffer_float extension");
-        return this.gl
+            throw new Error("Conversion to different image formats require that a canvas is passed when initializing the image.");
+        return this.gl || (this.gl = (0,
+        image_shader_context_1$1.assertNotNull)(this.canvas.getContext("webgl2"), "You cannot use a canvas that is already bound to a different type of rendering context.")),
+        this.gl
     }
     getShaderContext() {
         return this.shaderContext || (this.shaderContext = new image_shader_context_1$1.MPImageShaderContext),
@@ -580,13 +615,20 @@ class MPMask$1 {
             if (t)
                 e = new Float32Array(t).map((e=>e / 255));
             else {
-                const t = this.getGL()
-                  , r = this.getShaderContext();
                 e = new Float32Array(this.width * this.height);
-                const o = this.convertToWebGLTexture();
-                r.bindFramebuffer(t, o),
-                t.readPixels(0, 0, this.width, this.height, t.RED, t.FLOAT, e),
-                r.unbindFramebuffer()
+                const t = this.getGL()
+                  , r = this.getShaderContext()
+                  , o = this.convertToWebGLTexture();
+                if (r.bindFramebuffer(t, o),
+                (0,
+                platform_utils_1$1.isIOS)()) {
+                    const r = new Float32Array(this.width * this.height * 4);
+                    t.readPixels(0, 0, this.width, this.height, t.RGBA, t.FLOAT, r);
+                    for (let t = 0, o = 0; t < e.length; ++t,
+                    o += 4)
+                        e[t] = r[o]
+                } else
+                    t.readPixels(0, 0, this.width, this.height, t.RED, t.FLOAT, e)
             }
             this.containers.push(e)
         }
@@ -606,26 +648,31 @@ class MPMask$1 {
         if (!e) {
             const t = this.getGL();
             e = this.bindTexture();
-            const r = this.convertToFloat32Array();
-            t.texImage2D(t.TEXTURE_2D, 0, t.R32F, this.width, this.height, 0, t.RED, t.FLOAT, r),
+            const r = this.convertToFloat32Array()
+              , o = this.getTexImage2DFormat();
+            t.texImage2D(t.TEXTURE_2D, 0, o, this.width, this.height, 0, t.RED, t.FLOAT, r),
             this.unbindTexture()
         }
         return e
+    }
+    configureTextureParams() {
+        const e = this.getGL();
+        e.texParameteri(e.TEXTURE_2D, e.TEXTURE_WRAP_S, e.CLAMP_TO_EDGE),
+        e.texParameteri(e.TEXTURE_2D, e.TEXTURE_WRAP_T, e.CLAMP_TO_EDGE),
+        e.texParameteri(e.TEXTURE_2D, e.TEXTURE_MIN_FILTER, e.NEAREST),
+        e.texParameteri(e.TEXTURE_2D, e.TEXTURE_MAG_FILTER, e.NEAREST)
     }
     bindTexture() {
         const e = this.getGL();
         e.viewport(0, 0, this.width, this.height),
         e.activeTexture(e.TEXTURE0);
         let t = this.getContainer(MPMaskType.WEBGL_TEXTURE);
-        return t || (t = (0,
+        return t ? e.bindTexture(e.TEXTURE_2D, t) : (t = (0,
         image_shader_context_1$1.assertNotNull)(e.createTexture(), "Failed to create texture"),
         this.containers.push(t),
-        this.ownsWebGLTexture = !0),
+        this.ownsWebGLTexture = !0,
         e.bindTexture(e.TEXTURE_2D, t),
-        e.texParameteri(e.TEXTURE_2D, e.TEXTURE_WRAP_S, e.CLAMP_TO_EDGE),
-        e.texParameteri(e.TEXTURE_2D, e.TEXTURE_WRAP_T, e.CLAMP_TO_EDGE),
-        e.texParameteri(e.TEXTURE_2D, e.TEXTURE_MIN_FILTER, e.NEAREST),
-        e.texParameteri(e.TEXTURE_2D, e.TEXTURE_MAG_FILTER, e.NEAREST),
+        this.configureTextureParams()),
         t
     }
     unbindTexture() {
@@ -635,9 +682,11 @@ class MPMask$1 {
         if (this.ownsWebGLTexture) {
             this.getGL().deleteTexture(this.getContainer(MPMaskType.WEBGL_TEXTURE))
         }
+        MPMask$1.instancesBeforeWarning = -1
     }
 }
-mask.MPMask = MPMask$1;
+mask.MPMask = MPMask$1,
+MPMask$1.instancesBeforeWarning = INSTANCE_COUNT_WARNING_THRESHOLD;
 var face_detector = {}
   , calculator_pb = {}
   , googleProtobuf = {};
@@ -13962,7 +14011,8 @@ function convertFromDetectionProto(e) {
       , h = e.getLabelList()
       , y = e.getDisplayNameList()
       , b = {
-        categories: []
+        categories: [],
+        keypoints: []
     };
     for (let e = 0; e < m.length; e++)
         b.categories.push({
@@ -13978,16 +14028,14 @@ function convertFromDetectionProto(e) {
         width: null !== (s = _.getWidth()) && void 0 !== s ? s : 0,
         height: null !== (p = _.getHeight()) && void 0 !== p ? p : 0
     }),
-    null === (d = e.getLocationData()) || void 0 === d ? void 0 : d.getRelativeKeypointsList().length) {
-        b.keypoints = [];
+    null === (d = e.getLocationData()) || void 0 === d ? void 0 : d.getRelativeKeypointsList().length)
         for (const t of e.getLocationData().getRelativeKeypointsList())
             b.keypoints.push({
                 x: null !== (l = t.getX()) && void 0 !== l ? l : 0,
                 y: null !== (g = t.getY()) && void 0 !== g ? g : 0,
                 score: null !== (c = t.getScore()) && void 0 !== c ? c : 0,
                 label: null !== (u = t.getKeypointLabel()) && void 0 !== u ? u : ""
-            })
-    }
+            });
     return b
 }
 detection_result.convertFromDetectionProto = convertFromDetectionProto;
@@ -14355,18 +14403,8 @@ var vision_task_runner = {}
     r.object.extend(e, proto.mediapipe)
 }(rect_pb);
 var task_runner = {}
-  , graph_runner = {}
-  , platform_utils = {};
-function isWebKit(e=navigator) {
-    const t = e.userAgent;
-    return t.includes("Safari") && !t.includes("Chrome")
-}
-Object.defineProperty(platform_utils, "__esModule", {
-    value: !0
-}),
-platform_utils.isWebKit = void 0,
-platform_utils.isWebKit = isWebKit,
-function(e) {
+  , graph_runner = {};
+!function(e) {
     Object.defineProperty(e, "__esModule", {
         value: !0
     }),
@@ -14821,24 +14859,28 @@ class TaskRunner {
         this.graphRunner.setAutoRenderToScreen(!1)
     }
     applyOptions(e) {
-        var t, r, o, i, a;
-        const n = e.baseOptions || {};
+        var t, r, o, i, a, n;
+        const s = e.baseOptions || {};
         if ((null === (t = e.baseOptions) || void 0 === t ? void 0 : t.modelAssetBuffer) && (null === (r = e.baseOptions) || void 0 === r ? void 0 : r.modelAssetPath))
             throw new Error("Cannot set both baseOptions.modelAssetPath and baseOptions.modelAssetBuffer");
-        if (!((null === (o = this.baseOptions.getModelAsset()) || void 0 === o ? void 0 : o.hasFileContent()) || (null === (i = e.baseOptions) || void 0 === i ? void 0 : i.modelAssetBuffer) || (null === (a = e.baseOptions) || void 0 === a ? void 0 : a.modelAssetPath)))
+        if (!((null === (o = this.baseOptions.getModelAsset()) || void 0 === o ? void 0 : o.hasFileContent()) || (null === (i = this.baseOptions.getModelAsset()) || void 0 === i ? void 0 : i.hasFileName()) || (null === (a = e.baseOptions) || void 0 === a ? void 0 : a.modelAssetBuffer) || (null === (n = e.baseOptions) || void 0 === n ? void 0 : n.modelAssetPath)))
             throw new Error("Either baseOptions.modelAssetPath or baseOptions.modelAssetBuffer must be set");
-        return this.setAcceleration(n),
-        n.modelAssetPath ? fetch(n.modelAssetPath.toString()).then((e=>{
+        return this.setAcceleration(s),
+        s.modelAssetPath ? fetch(s.modelAssetPath.toString()).then((e=>{
             if (e.ok)
                 return e.arrayBuffer();
-            throw new Error(`Failed to fetch model: ${n.modelAssetPath} (${e.status})`)
+            throw new Error(`Failed to fetch model: ${s.modelAssetPath} (${e.status})`)
         }
         )).then((e=>{
-            this.setExternalFile(new Uint8Array(e)),
+            try {
+                this.graphRunner.wasmModule.FS_unlink("/model.dat")
+            } catch (e) {}
+            this.graphRunner.wasmModule.FS_createDataFile("/", "model.dat", new Uint8Array(e), !0, !1, !1),
+            this.setExternalFile("/model.dat"),
             this.refreshGraph(),
             this.onGraphRefreshed()
         }
-        )) : (this.setExternalFile(n.modelAssetBuffer),
+        )) : (this.setExternalFile(s.modelAssetBuffer),
         this.refreshGraph(),
         this.onGraphRefreshed(),
         Promise.resolve())
@@ -14887,7 +14929,9 @@ class TaskRunner {
     }
     setExternalFile(e) {
         const t = this.baseOptions.getModelAsset() || new external_file_pb_1.ExternalFile;
-        e && t.setFileContent(e),
+        "string" == typeof e ? (t.setFileName(e),
+        t.clearFileContent()) : e instanceof Uint8Array && (t.setFileContent(e),
+        t.clearFileName()),
         this.baseOptions.setModelAsset(t)
     }
     setAcceleration(e) {
@@ -25327,7 +25371,9 @@ function(e) {
         constructor(e, t) {
             super(new m.VisionGraphRunner(e,t), h, y, !1),
             this.result = {
-                faceLandmarks: []
+                faceLandmarks: [],
+                faceBlendshapes: [],
+                facialTransformationMatrixes: []
             },
             this.outputFaceBlendshapes = !1,
             this.outputFacialTransformationMatrixes = !1,
@@ -25367,10 +25413,10 @@ function(e) {
         }
         resetResults() {
             this.result = {
-                faceLandmarks: []
-            },
-            this.outputFaceBlendshapes && (this.result.faceBlendshapes = []),
-            this.outputFacialTransformationMatrixes && (this.result.facialTransformationMatrixes = [])
+                faceLandmarks: [],
+                faceBlendshapes: [],
+                facialTransformationMatrixes: []
+            }
         }
         initDefaults() {
             this.faceDetectorGraphOptions.setNumFaces(1),
@@ -25387,7 +25433,7 @@ function(e) {
         }
         addBlenshape(e) {
             var t;
-            if (this.result.faceBlendshapes)
+            if (this.outputFaceBlendshapes)
                 for (const r of e) {
                     const e = a.ClassificationList.deserializeBinary(r);
                     this.result.faceBlendshapes.push((0,
@@ -25396,7 +25442,7 @@ function(e) {
         }
         addFacialTransformationMatrixes(e) {
             var t, r, o;
-            if (this.result.facialTransformationMatrixes)
+            if (this.outputFacialTransformationMatrixes)
                 for (const i of e) {
                     const e = d.FaceGeometry.deserializeBinary(i).getPoseTransformMatrix();
                     e && this.result.facialTransformationMatrixes.push({
@@ -25495,13 +25541,14 @@ var face_stylizer = {}
         return proto.mediapipe.tasks.vision.face_stylizer.proto.FaceStylizerGraphOptions.toObject(e, this)
     }
     ,
-    proto.mediapipe.tasks.vision.face_stylizer.proto.FaceStylizerGraphOptions.toObject = function(e, t) {
-        var r, o = {
-            baseOptions: (r = t.getBaseOptions()) && n.BaseOptions.toObject(e, r),
-            faceLandmarkerGraphOptions: (r = t.getFaceLandmarkerGraphOptions()) && s.FaceLandmarkerGraphOptions.toObject(e, r)
+    proto.mediapipe.tasks.vision.face_stylizer.proto.FaceStylizerGraphOptions.toObject = function(e, r) {
+        var o, i = {
+            baseOptions: (o = r.getBaseOptions()) && n.BaseOptions.toObject(e, o),
+            faceLandmarkerGraphOptions: (o = r.getFaceLandmarkerGraphOptions()) && s.FaceLandmarkerGraphOptions.toObject(e, o),
+            faceAlignmentSize: t.Message.getFieldWithDefault(r, 3, 256)
         };
-        return e && (o.$jspbMessageInstance = t),
-        o
+        return e && (i.$jspbMessageInstance = r),
+        i
     }
     ),
     proto.mediapipe.tasks.vision.face_stylizer.proto.FaceStylizerGraphOptions.deserializeBinary = function(e) {
@@ -25523,6 +25570,10 @@ var face_stylizer = {}
                 t.readMessage(r, s.FaceLandmarkerGraphOptions.deserializeBinaryFromReader),
                 e.setFaceLandmarkerGraphOptions(r);
                 break;
+            case 3:
+                r = t.readInt32();
+                e.setFaceAlignmentSize(r);
+                break;
             default:
                 t.skipField()
             }
@@ -25536,10 +25587,11 @@ var face_stylizer = {}
         e.getResultBuffer()
     }
     ,
-    proto.mediapipe.tasks.vision.face_stylizer.proto.FaceStylizerGraphOptions.serializeBinaryToWriter = function(e, t) {
-        var r = void 0;
-        null != (r = e.getBaseOptions()) && t.writeMessage(1, r, n.BaseOptions.serializeBinaryToWriter),
-        null != (r = e.getFaceLandmarkerGraphOptions()) && t.writeMessage(2, r, s.FaceLandmarkerGraphOptions.serializeBinaryToWriter)
+    proto.mediapipe.tasks.vision.face_stylizer.proto.FaceStylizerGraphOptions.serializeBinaryToWriter = function(e, r) {
+        var o = void 0;
+        null != (o = e.getBaseOptions()) && r.writeMessage(1, o, n.BaseOptions.serializeBinaryToWriter),
+        null != (o = e.getFaceLandmarkerGraphOptions()) && r.writeMessage(2, o, s.FaceLandmarkerGraphOptions.serializeBinaryToWriter),
+        null != (o = t.Message.getField(e, 3)) && r.writeInt32(3, o)
     }
     ,
     proto.mediapipe.tasks.vision.face_stylizer.proto.FaceStylizerGraphOptions.ext = new t.ExtensionFieldInfo(513916220,{
@@ -25577,6 +25629,22 @@ var face_stylizer = {}
     ,
     proto.mediapipe.tasks.vision.face_stylizer.proto.FaceStylizerGraphOptions.prototype.hasFaceLandmarkerGraphOptions = function() {
         return null != t.Message.getField(this, 2)
+    }
+    ,
+    proto.mediapipe.tasks.vision.face_stylizer.proto.FaceStylizerGraphOptions.prototype.getFaceAlignmentSize = function() {
+        return t.Message.getFieldWithDefault(this, 3, 256)
+    }
+    ,
+    proto.mediapipe.tasks.vision.face_stylizer.proto.FaceStylizerGraphOptions.prototype.setFaceAlignmentSize = function(e) {
+        return t.Message.setField(this, 3, e)
+    }
+    ,
+    proto.mediapipe.tasks.vision.face_stylizer.proto.FaceStylizerGraphOptions.prototype.clearFaceAlignmentSize = function() {
+        return t.Message.setField(this, 3, void 0)
+    }
+    ,
+    proto.mediapipe.tasks.vision.face_stylizer.proto.FaceStylizerGraphOptions.prototype.hasFaceAlignmentSize = function() {
+        return null != t.Message.getField(this, 3)
     }
     ,
     proto.mediapipe.tasks.vision.face_stylizer.proto.FaceStylizerGraphOptions.ext = new t.ExtensionFieldInfo(513916220,{
@@ -26947,19 +27015,19 @@ function(e) {
       , F = "world_hand_landmarks"
       , M = "handedness"
       , R = .5;
-    class k extends f.VisionTaskRunner {
+    class v extends f.VisionTaskRunner {
         static createFromOptions(e, t) {
-            return f.VisionTaskRunner.createVisionInstance(k, e, t)
+            return f.VisionTaskRunner.createVisionInstance(v, e, t)
         }
         static createFromModelBuffer(e, t) {
-            return f.VisionTaskRunner.createVisionInstance(k, e, {
+            return f.VisionTaskRunner.createVisionInstance(v, e, {
                 baseOptions: {
                     modelAssetBuffer: t
                 }
             })
         }
         static createFromModelPath(e, t) {
-            return f.VisionTaskRunner.createVisionInstance(k, e, {
+            return f.VisionTaskRunner.createVisionInstance(v, e, {
                 baseOptions: {
                     modelAssetPath: t
                 }
@@ -27149,8 +27217,8 @@ function(e) {
             this.setGraph(new Uint8Array(a), !0)
         }
     }
-    e.GestureRecognizer = k,
-    k.HAND_CONNECTIONS = h.HAND_CONNECTIONS
+    e.GestureRecognizer = v,
+    v.HAND_CONNECTIONS = h.HAND_CONNECTIONS
 }(gesture_recognizer);
 var hand_landmarker = {}
   , hand_landmarker_options = {};
@@ -29103,12 +29171,29 @@ var image_segmenter_graph_options_pb = {};
     a.CalculatorOptions.extensions[458105758] = proto.mediapipe.tasks.vision.image_segmenter.proto.ImageSegmenterGraphOptions.ext,
     r.object.extend(e, proto.mediapipe.tasks.vision.image_segmenter.proto)
 }(image_segmenter_graph_options_pb);
-var image_segmenter_options = {};
-Object.defineProperty(image_segmenter_options, "__esModule", {
-    value: !0
-});
 var image_segmenter_result = {};
 Object.defineProperty(image_segmenter_result, "__esModule", {
+    value: !0
+}),
+image_segmenter_result.ImageSegmenterResult = void 0;
+class ImageSegmenterResult {
+    constructor(e, t, r) {
+        this.confidenceMasks = e,
+        this.categoryMask = t,
+        this.qualityScores = r
+    }
+    close() {
+        var e, t;
+        null === (e = this.confidenceMasks) || void 0 === e || e.forEach((e=>{
+            e.close()
+        }
+        )),
+        null === (t = this.categoryMask) || void 0 === t || t.close()
+    }
+}
+image_segmenter_result.ImageSegmenterResult = ImageSegmenterResult;
+var image_segmenter_options = {};
+Object.defineProperty(image_segmenter_options, "__esModule", {
     value: !0
 }),
 function(e) {
@@ -29143,35 +29228,36 @@ function(e) {
       , n = tensors_to_segmentation_calculator_pb
       , s = image_segmenter_graph_options_pb
       , p = segmenter_options_pb
-      , d = vision_task_runner;
+      , d = vision_task_runner
+      , l = image_segmenter_result;
     r(image_segmenter_options, e),
     r(image_segmenter_result, e);
-    const l = "image_in"
-      , g = "norm_rect"
-      , c = "confidence_masks"
-      , u = "category_mask"
-      , m = "mediapipe.tasks.TensorsToSegmentationCalculator";
-    class f extends d.VisionTaskRunner {
+    const g = "image_in"
+      , c = "norm_rect"
+      , u = "confidence_masks"
+      , m = "category_mask"
+      , f = "quality_scores"
+      , h = "mediapipe.tasks.TensorsToSegmentationCalculator";
+    class y extends d.VisionTaskRunner {
         static createFromOptions(e, t) {
-            return d.VisionTaskRunner.createVisionInstance(f, e, t)
+            return d.VisionTaskRunner.createVisionInstance(y, e, t)
         }
         static createFromModelBuffer(e, t) {
-            return d.VisionTaskRunner.createVisionInstance(f, e, {
+            return d.VisionTaskRunner.createVisionInstance(y, e, {
                 baseOptions: {
                     modelAssetBuffer: t
                 }
             })
         }
         static createFromModelPath(e, t) {
-            return d.VisionTaskRunner.createVisionInstance(f, e, {
+            return d.VisionTaskRunner.createVisionInstance(y, e, {
                 baseOptions: {
                     modelAssetPath: t
                 }
             })
         }
         constructor(e, t) {
-            super(new d.VisionGraphRunner(e,t), l, g, !1),
-            this.result = {},
+            super(new d.VisionGraphRunner(e,t), g, c, !1),
             this.labels = [],
             this.outputCategoryMask = false,
             this.outputConfidenceMasks = true,
@@ -29198,10 +29284,10 @@ function(e) {
         }
         populateLabels() {
             var e, t, r;
-            const o = this.getCalculatorGraphConfig().getNodeList().filter((e=>e.getName().includes(m)));
+            const o = this.getCalculatorGraphConfig().getNodeList().filter((e=>e.getName().includes(h)));
             if (this.labels = [],
             o.length > 1)
-                throw new Error(`The graph has more than one ${m}.`);
+                throw new Error(`The graph has more than one ${h}.`);
             if (1 === o.length) {
                 (null !== (r = null === (t = null === (e = o[0].getOptions()) || void 0 === e ? void 0 : e.getExtension(n.TensorsToSegmentationCalculatorOptions.ext)) || void 0 === t ? void 0 : t.getLabelItemsMap()) && void 0 !== r ? r : new Map).forEach(((e,t)=>{
                     this.labels[Number(t)] = e.getName()
@@ -29211,78 +29297,92 @@ function(e) {
         }
         segment(e, t, r) {
             const o = "function" != typeof t ? t : {};
-            if (this.userCallback = "function" == typeof t ? t : r,
+            return this.userCallback = "function" == typeof t ? t : r,
             this.reset(),
             this.processImageData(e, o),
-            !this.userCallback)
-                return this.result
+            this.processResults()
         }
         segmentForVideo(e, t, r, o) {
             const i = "function" != typeof r ? r : {};
-            if (this.userCallback = "function" == typeof r ? r : o,
+            return this.userCallback = "function" == typeof r ? r : o,
             this.reset(),
             this.processVideoData(e, i, t),
-            !this.userCallback)
-                return this.result
+            this.processResults()
         }
         getLabels() {
             return this.labels
         }
         reset() {
-            this.result = {}
+            this.categoryMask = void 0,
+            this.confidenceMasks = void 0,
+            this.qualityScores = void 0
         }
-        maybeInvokeCallback() {
-            this.outputConfidenceMasks && !("confidenceMasks"in this.result) || this.outputCategoryMask && !("categoryMask"in this.result) || this.userCallback && (this.userCallback(this.result),
-            this.freeKeepaliveStreams())
+        processResults() {
+            try {
+                const e = new l.ImageSegmenterResult(this.confidenceMasks,this.categoryMask,this.qualityScores);
+                if (!this.userCallback)
+                    return e;
+                this.userCallback(e)
+            } finally {
+                this.freeKeepaliveStreams()
+            }
         }
         refreshGraph() {
             const e = new o.CalculatorGraphConfig;
-            e.addInputStream(l),
-            e.addInputStream(g);
+            e.addInputStream(g),
+            e.addInputStream(c);
             const t = new i.CalculatorOptions;
             t.setExtension(s.ImageSegmenterGraphOptions.ext, this.options);
             const r = new o.CalculatorGraphConfig.Node;
             r.setCalculator("mediapipe.tasks.vision.image_segmenter.ImageSegmenterGraph"),
-            r.addInputStream("IMAGE:" + l),
-            r.addInputStream("NORM_RECT:" + g),
+            r.addInputStream("IMAGE:" + g),
+            r.addInputStream("NORM_RECT:" + c),
             r.setOptions(t),
             e.addNode(r),
             this.addKeepaliveNode(e),
-            this.outputConfidenceMasks && (e.addOutputStream(c),
-            r.addOutputStream("CONFIDENCE_MASKS:" + c),
-            this.keepStreamAlive(c),
-            this.graphRunner.attachImageVectorListener(c, ((e,t)=>{
-                this.result.confidenceMasks = e.map((e=>this.convertToMPMask(e, !this.userCallback))),
-                this.setLatestOutputTimestamp(t),
-                this.maybeInvokeCallback()
-            }
-            )),
-            this.graphRunner.attachEmptyPacketListener(c, (e=>{
-                this.result.confidenceMasks = void 0,
-                this.setLatestOutputTimestamp(e),
-                this.maybeInvokeCallback()
-            }
-            ))),
-            this.outputCategoryMask && (e.addOutputStream(u),
-            r.addOutputStream("CATEGORY_MASK:" + u),
+            this.outputConfidenceMasks && (e.addOutputStream(u),
+            r.addOutputStream("CONFIDENCE_MASKS:" + u),
             this.keepStreamAlive(u),
-            this.graphRunner.attachImageListener(u, ((e,t)=>{
-                this.result.categoryMask = this.convertToMPMask(e, !this.userCallback),
-                this.setLatestOutputTimestamp(t),
-                this.maybeInvokeCallback()
+            this.graphRunner.attachImageVectorListener(u, ((e,t)=>{
+                this.confidenceMasks = e.map((e=>this.convertToMPMask(e, !this.userCallback))),
+                this.setLatestOutputTimestamp(t)
             }
             )),
             this.graphRunner.attachEmptyPacketListener(u, (e=>{
-                this.result.categoryMask = void 0,
-                this.setLatestOutputTimestamp(e),
-                this.maybeInvokeCallback()
+                this.confidenceMasks = [],
+                this.setLatestOutputTimestamp(e)
             }
-            )));
+            ))),
+            this.outputCategoryMask && (e.addOutputStream(m),
+            r.addOutputStream("CATEGORY_MASK:" + m),
+            this.keepStreamAlive(m),
+            this.graphRunner.attachImageListener(m, ((e,t)=>{
+                this.categoryMask = this.convertToMPMask(e, !this.userCallback),
+                this.setLatestOutputTimestamp(t)
+            }
+            )),
+            this.graphRunner.attachEmptyPacketListener(m, (e=>{
+                this.categoryMask = void 0,
+                this.setLatestOutputTimestamp(e)
+            }
+            ))),
+            e.addOutputStream(f),
+            r.addOutputStream("QUALITY_SCORES:" + f),
+            this.graphRunner.attachFloatVectorListener(f, ((e,t)=>{
+                this.qualityScores = e,
+                this.setLatestOutputTimestamp(t)
+            }
+            )),
+            this.graphRunner.attachEmptyPacketListener(f, (e=>{
+                this.categoryMask = void 0,
+                this.setLatestOutputTimestamp(e)
+            }
+            ));
             const a = e.serializeBinary();
             this.setGraph(new Uint8Array(a), !0)
         }
     }
-    e.ImageSegmenter = f
+    e.ImageSegmenter = y
 }(image_segmenter);
 var interactive_segmenter = {}
   , color_pb = {};
@@ -31748,12 +31848,29 @@ var render_data_pb = {};
     ,
     r.object.extend(e, proto.mediapipe)
 }(render_data_pb);
-var interactive_segmenter_options = {};
-Object.defineProperty(interactive_segmenter_options, "__esModule", {
-    value: !0
-});
 var interactive_segmenter_result = {};
 Object.defineProperty(interactive_segmenter_result, "__esModule", {
+    value: !0
+}),
+interactive_segmenter_result.InteractiveSegmenterResult = void 0;
+class InteractiveSegmenterResult {
+    constructor(e, t, r) {
+        this.confidenceMasks = e,
+        this.categoryMask = t,
+        this.qualityScores = r
+    }
+    close() {
+        var e, t;
+        null === (e = this.confidenceMasks) || void 0 === e || e.forEach((e=>{
+            e.close()
+        }
+        )),
+        null === (t = this.categoryMask) || void 0 === t || t.close()
+    }
+}
+interactive_segmenter_result.InteractiveSegmenterResult = InteractiveSegmenterResult;
+var interactive_segmenter_options = {};
+Object.defineProperty(interactive_segmenter_options, "__esModule", {
     value: !0
 }),
 function(e) {
@@ -31789,35 +31906,36 @@ function(e) {
       , s = segmenter_options_pb
       , p = vision_task_runner
       , d = color_pb
-      , l = render_data_pb;
+      , l = render_data_pb
+      , g = interactive_segmenter_result;
     r(interactive_segmenter_options, e),
     r(interactive_segmenter_result, e);
-    const g = "image_in"
-      , c = "norm_rect_in"
-      , u = "roi_in"
-      , m = "confidence_masks"
-      , f = "category_mask";
-    class h extends p.VisionTaskRunner {
+    const c = "image_in"
+      , u = "norm_rect_in"
+      , m = "roi_in"
+      , f = "confidence_masks"
+      , h = "category_mask"
+      , y = "quality_scores";
+    class b extends p.VisionTaskRunner {
         static createFromOptions(e, t) {
-            return p.VisionTaskRunner.createVisionInstance(h, e, t)
+            return p.VisionTaskRunner.createVisionInstance(b, e, t)
         }
         static createFromModelBuffer(e, t) {
-            return p.VisionTaskRunner.createVisionInstance(h, e, {
+            return p.VisionTaskRunner.createVisionInstance(b, e, {
                 baseOptions: {
                     modelAssetBuffer: t
                 }
             })
         }
         static createFromModelPath(e, t) {
-            return p.VisionTaskRunner.createVisionInstance(h, e, {
+            return p.VisionTaskRunner.createVisionInstance(b, e, {
                 baseOptions: {
                     modelAssetPath: t
                 }
             })
         }
         constructor(e, t) {
-            super(new p.VisionGraphRunner(e,t), g, c, !1),
-            this.result = {},
+            super(new p.VisionGraphRunner(e,t), c, u, !1),
             this.outputCategoryMask = false,
             this.outputConfidenceMasks = true,
             this.options = new n.ImageSegmenterGraphOptions,
@@ -31839,65 +31957,80 @@ function(e) {
         }
         segment(e, t, r, o) {
             const i = "function" != typeof r ? r : {};
-            if (this.userCallback = "function" == typeof r ? r : o,
+            return this.userCallback = "function" == typeof r ? r : o,
             this.reset(),
             this.processRenderData(t, this.getSynctheticTimestamp()),
             this.processImageData(e, i),
-            !this.userCallback)
-                return this.result
+            this.processResults()
         }
         reset() {
-            this.result = {}
+            this.confidenceMasks = void 0,
+            this.categoryMask = void 0,
+            this.qualityScores = void 0
         }
-        maybeInvokeCallback() {
-            this.outputConfidenceMasks && !("confidenceMasks"in this.result) || this.outputCategoryMask && !("categoryMask"in this.result) || this.userCallback && (this.userCallback(this.result),
-            this.freeKeepaliveStreams())
+        processResults() {
+            try {
+                const e = new g.InteractiveSegmenterResult(this.confidenceMasks,this.categoryMask,this.qualityScores);
+                if (!this.userCallback)
+                    return e;
+                this.userCallback(e)
+            } finally {
+                this.freeKeepaliveStreams()
+            }
         }
         refreshGraph() {
             const e = new o.CalculatorGraphConfig;
-            e.addInputStream(g),
-            e.addInputStream(u),
-            e.addInputStream(c);
+            e.addInputStream(c),
+            e.addInputStream(m),
+            e.addInputStream(u);
             const t = new i.CalculatorOptions;
             t.setExtension(n.ImageSegmenterGraphOptions.ext, this.options);
             const r = new o.CalculatorGraphConfig.Node;
             r.setCalculator("mediapipe.tasks.vision.interactive_segmenter.InteractiveSegmenterGraph"),
-            r.addInputStream("IMAGE:" + g),
-            r.addInputStream("ROI:" + u),
-            r.addInputStream("NORM_RECT:" + c),
+            r.addInputStream("IMAGE:" + c),
+            r.addInputStream("ROI:" + m),
+            r.addInputStream("NORM_RECT:" + u),
             r.setOptions(t),
             e.addNode(r),
             this.addKeepaliveNode(e),
-            this.outputConfidenceMasks && (e.addOutputStream(m),
-            r.addOutputStream("CONFIDENCE_MASKS:" + m),
-            this.keepStreamAlive(m),
-            this.graphRunner.attachImageVectorListener(m, ((e,t)=>{
-                this.result.confidenceMasks = e.map((e=>this.convertToMPMask(e, !this.userCallback))),
-                this.setLatestOutputTimestamp(t),
-                this.maybeInvokeCallback()
-            }
-            )),
-            this.graphRunner.attachEmptyPacketListener(m, (e=>{
-                this.result.confidenceMasks = void 0,
-                this.setLatestOutputTimestamp(e),
-                this.maybeInvokeCallback()
-            }
-            ))),
-            this.outputCategoryMask && (e.addOutputStream(f),
-            r.addOutputStream("CATEGORY_MASK:" + f),
+            this.outputConfidenceMasks && (e.addOutputStream(f),
+            r.addOutputStream("CONFIDENCE_MASKS:" + f),
             this.keepStreamAlive(f),
-            this.graphRunner.attachImageListener(f, ((e,t)=>{
-                this.result.categoryMask = this.convertToMPMask(e, !this.userCallback),
-                this.setLatestOutputTimestamp(t),
-                this.maybeInvokeCallback()
+            this.graphRunner.attachImageVectorListener(f, ((e,t)=>{
+                this.confidenceMasks = e.map((e=>this.convertToMPMask(e, !this.userCallback))),
+                this.setLatestOutputTimestamp(t)
             }
             )),
             this.graphRunner.attachEmptyPacketListener(f, (e=>{
-                this.result.categoryMask = void 0,
-                this.setLatestOutputTimestamp(e),
-                this.maybeInvokeCallback()
+                this.confidenceMasks = [],
+                this.setLatestOutputTimestamp(e)
             }
-            )));
+            ))),
+            this.outputCategoryMask && (e.addOutputStream(h),
+            r.addOutputStream("CATEGORY_MASK:" + h),
+            this.keepStreamAlive(h),
+            this.graphRunner.attachImageListener(h, ((e,t)=>{
+                this.categoryMask = this.convertToMPMask(e, !this.userCallback),
+                this.setLatestOutputTimestamp(t)
+            }
+            )),
+            this.graphRunner.attachEmptyPacketListener(h, (e=>{
+                this.categoryMask = void 0,
+                this.setLatestOutputTimestamp(e)
+            }
+            ))),
+            e.addOutputStream(y),
+            r.addOutputStream("QUALITY_SCORES:" + y),
+            this.graphRunner.attachFloatVectorListener(y, ((e,t)=>{
+                this.qualityScores = e,
+                this.setLatestOutputTimestamp(t)
+            }
+            )),
+            this.graphRunner.attachEmptyPacketListener(y, (e=>{
+                this.categoryMask = void 0,
+                this.setLatestOutputTimestamp(e)
+            }
+            ));
             const a = e.serializeBinary();
             this.setGraph(new Uint8Array(a), !0)
         }
@@ -31931,10 +32064,10 @@ function(e) {
                 }
             }
             r.addRenderAnnotations(o),
-            this.graphRunner.addProtoToStream(r.serializeBinary(), "drishti.RenderData", u, t)
+            this.graphRunner.addProtoToStream(r.serializeBinary(), "drishti.RenderData", m, t)
         }
     }
-    e.InteractiveSegmenter = h
+    e.InteractiveSegmenter = b
 }(interactive_segmenter);
 var object_detector = {}
   , object_detector_options_pb = {};
@@ -32717,12 +32850,28 @@ function(e) {
     a.CalculatorOptions.extensions[516587230] = proto.mediapipe.tasks.vision.pose_landmarker.proto.PoseLandmarkerGraphOptions.ext,
     r.object.extend(e, proto.mediapipe.tasks.vision.pose_landmarker.proto)
 }(pose_landmarker_graph_options_pb);
-var pose_landmarker_options = {};
-Object.defineProperty(pose_landmarker_options, "__esModule", {
-    value: !0
-});
 var pose_landmarker_result = {};
 Object.defineProperty(pose_landmarker_result, "__esModule", {
+    value: !0
+}),
+pose_landmarker_result.PoseLandmarkerResult = void 0;
+class PoseLandmarkerResult {
+    constructor(e, t, r) {
+        this.landmarks = e,
+        this.worldLandmarks = t,
+        this.segmentationMasks = r
+    }
+    close() {
+        var e;
+        null === (e = this.segmentationMasks) || void 0 === e || e.forEach((e=>{
+            e.close()
+        }
+        ))
+    }
+}
+pose_landmarker_result.PoseLandmarkerResult = PoseLandmarkerResult;
+var pose_landmarker_options = {};
+Object.defineProperty(pose_landmarker_options, "__esModule", {
     value: !0
 }),
 function(e) {
@@ -32759,36 +32908,38 @@ function(e) {
       , p = pose_landmarker_graph_options_pb
       , d = pose_landmarks_detector_graph_options_pb
       , l = landmark_result
-      , g = vision_task_runner;
+      , g = vision_task_runner
+      , c = pose_landmarker_result;
     r(pose_landmarker_options, e),
     r(pose_landmarker_result, e);
-    const c = "image_in"
-      , u = "norm_rect"
-      , m = "normalized_landmarks"
-      , f = "world_landmarks"
-      , h = "segmentation_masks"
-      , y = .5;
-    class b extends g.VisionTaskRunner {
+    const u = "image_in"
+      , m = "norm_rect"
+      , f = "normalized_landmarks"
+      , h = "world_landmarks"
+      , y = "segmentation_masks"
+      , b = .5;
+    class _ extends g.VisionTaskRunner {
         static createFromOptions(e, t) {
-            return g.VisionTaskRunner.createVisionInstance(b, e, t)
+            return g.VisionTaskRunner.createVisionInstance(_, e, t)
         }
         static createFromModelBuffer(e, t) {
-            return g.VisionTaskRunner.createVisionInstance(b, e, {
+            return g.VisionTaskRunner.createVisionInstance(_, e, {
                 baseOptions: {
                     modelAssetBuffer: t
                 }
             })
         }
         static createFromModelPath(e, t) {
-            return g.VisionTaskRunner.createVisionInstance(b, e, {
+            return g.VisionTaskRunner.createVisionInstance(_, e, {
                 baseOptions: {
                     modelAssetPath: t
                 }
             })
         }
         constructor(e, t) {
-            super(new g.VisionGraphRunner(e,t), c, u, !1),
-            this.result = {},
+            super(new g.VisionGraphRunner(e,t), u, m, !1),
+            this.landmarks = [],
+            this.worldLandmarks = [],
             this.outputSegmentationMasks = !1,
             this.options = new p.PoseLandmarkerGraphOptions,
             this.options.setBaseOptions(new n.BaseOptions),
@@ -32807,119 +32958,119 @@ function(e) {
         setOptions(e) {
             var t, r, o, i, a;
             return "numPoses"in e && this.poseDetectorGraphOptions.setNumPoses(null !== (t = e.numPoses) && void 0 !== t ? t : 1),
-            "minPoseDetectionConfidence"in e && this.poseDetectorGraphOptions.setMinDetectionConfidence(null !== (r = e.minPoseDetectionConfidence) && void 0 !== r ? r : y),
-            "minTrackingConfidence"in e && this.options.setMinTrackingConfidence(null !== (o = e.minTrackingConfidence) && void 0 !== o ? o : y),
-            "minPosePresenceConfidence"in e && this.poseLandmarksDetectorGraphOptions.setMinDetectionConfidence(null !== (i = e.minPosePresenceConfidence) && void 0 !== i ? i : y),
+            "minPoseDetectionConfidence"in e && this.poseDetectorGraphOptions.setMinDetectionConfidence(null !== (r = e.minPoseDetectionConfidence) && void 0 !== r ? r : b),
+            "minTrackingConfidence"in e && this.options.setMinTrackingConfidence(null !== (o = e.minTrackingConfidence) && void 0 !== o ? o : b),
+            "minPosePresenceConfidence"in e && this.poseLandmarksDetectorGraphOptions.setMinDetectionConfidence(null !== (i = e.minPosePresenceConfidence) && void 0 !== i ? i : b),
             "outputSegmentationMasks"in e && (this.outputSegmentationMasks = null !== (a = e.outputSegmentationMasks) && void 0 !== a && a),
             this.applyOptions(e)
         }
         detect(e, t, r) {
             const o = "function" != typeof t ? t : {};
-            if (this.userCallback = "function" == typeof t ? t : r,
+            return this.userCallback = "function" == typeof t ? t : r,
             this.resetResults(),
             this.processImageData(e, o),
-            !this.userCallback)
-                return this.result
+            this.processResults()
         }
         detectForVideo(e, t, r, o) {
             const i = "function" != typeof r ? r : {};
-            if (this.userCallback = "function" == typeof r ? r : o,
+            return this.userCallback = "function" == typeof r ? r : o,
             this.resetResults(),
             this.processVideoData(e, i, t),
-            !this.userCallback)
-                return this.result
+            this.processResults()
         }
         resetResults() {
-            this.result = {}
+            this.landmarks = [],
+            this.worldLandmarks = [],
+            this.segmentationMasks = void 0
         }
-        maybeInvokeCallback() {
-            "landmarks"in this.result && "worldLandmarks"in this.result && (this.outputSegmentationMasks && !("segmentationMasks"in this.result) || this.userCallback && (this.userCallback(this.result),
-            this.freeKeepaliveStreams()))
+        processResults() {
+            try {
+                const e = new c.PoseLandmarkerResult(this.landmarks,this.worldLandmarks,this.segmentationMasks);
+                if (!this.userCallback)
+                    return e;
+                this.userCallback(e)
+            } finally {
+                this.freeKeepaliveStreams()
+            }
         }
         initDefaults() {
             this.poseDetectorGraphOptions.setNumPoses(1),
-            this.poseDetectorGraphOptions.setMinDetectionConfidence(y),
-            this.poseLandmarksDetectorGraphOptions.setMinDetectionConfidence(y),
-            this.options.setMinTrackingConfidence(y)
+            this.poseDetectorGraphOptions.setMinDetectionConfidence(b),
+            this.poseLandmarksDetectorGraphOptions.setMinDetectionConfidence(b),
+            this.options.setMinTrackingConfidence(b)
         }
         addJsLandmarks(e) {
-            this.result.landmarks = [];
+            this.landmarks = [];
             for (const t of e) {
                 const e = a.NormalizedLandmarkList.deserializeBinary(t);
-                this.result.landmarks.push((0,
+                this.landmarks.push((0,
                 l.convertToLandmarks)(e))
             }
         }
         adddJsWorldLandmarks(e) {
-            this.result.worldLandmarks = [];
+            this.worldLandmarks = [];
             for (const t of e) {
                 const e = a.LandmarkList.deserializeBinary(t);
-                this.result.worldLandmarks.push((0,
+                this.worldLandmarks.push((0,
                 l.convertToWorldLandmarks)(e))
             }
         }
         refreshGraph() {
             const e = new o.CalculatorGraphConfig;
-            e.addInputStream(c),
             e.addInputStream(u),
-            e.addOutputStream(m),
+            e.addInputStream(m),
             e.addOutputStream(f),
-            e.addOutputStream(h);
+            e.addOutputStream(h),
+            e.addOutputStream(y);
             const t = new i.CalculatorOptions;
             t.setExtension(p.PoseLandmarkerGraphOptions.ext, this.options);
             const r = new o.CalculatorGraphConfig.Node;
             r.setCalculator("mediapipe.tasks.vision.pose_landmarker.PoseLandmarkerGraph"),
-            r.addInputStream("IMAGE:" + c),
-            r.addInputStream("NORM_RECT:" + u),
-            r.addOutputStream("NORM_LANDMARKS:" + m),
-            r.addOutputStream("WORLD_LANDMARKS:" + f),
+            r.addInputStream("IMAGE:" + u),
+            r.addInputStream("NORM_RECT:" + m),
+            r.addOutputStream("NORM_LANDMARKS:" + f),
+            r.addOutputStream("WORLD_LANDMARKS:" + h),
             r.setOptions(t),
             e.addNode(r),
             this.addKeepaliveNode(e),
-            this.graphRunner.attachProtoVectorListener(m, ((e,t)=>{
-                this.addJsLandmarks(e),
-                this.setLatestOutputTimestamp(t),
-                this.maybeInvokeCallback()
-            }
-            )),
-            this.graphRunner.attachEmptyPacketListener(m, (e=>{
-                this.result.landmarks = [],
-                this.setLatestOutputTimestamp(e),
-                this.maybeInvokeCallback()
-            }
-            )),
             this.graphRunner.attachProtoVectorListener(f, ((e,t)=>{
-                this.adddJsWorldLandmarks(e),
-                this.setLatestOutputTimestamp(t),
-                this.maybeInvokeCallback()
+                this.addJsLandmarks(e),
+                this.setLatestOutputTimestamp(t)
             }
             )),
             this.graphRunner.attachEmptyPacketListener(f, (e=>{
-                this.result.worldLandmarks = [],
-                this.setLatestOutputTimestamp(e),
-                this.maybeInvokeCallback()
+                this.landmarks = [],
+                this.setLatestOutputTimestamp(e)
             }
             )),
-            this.outputSegmentationMasks && (r.addOutputStream("SEGMENTATION_MASK:" + h),
-            this.keepStreamAlive(h),
-            this.graphRunner.attachImageVectorListener(h, ((e,t)=>{
-                this.result.segmentationMasks = e.map((e=>this.convertToMPMask(e, !this.userCallback))),
-                this.setLatestOutputTimestamp(t),
-                this.maybeInvokeCallback()
+            this.graphRunner.attachProtoVectorListener(h, ((e,t)=>{
+                this.adddJsWorldLandmarks(e),
+                this.setLatestOutputTimestamp(t)
             }
             )),
             this.graphRunner.attachEmptyPacketListener(h, (e=>{
-                this.result.segmentationMasks = [],
-                this.setLatestOutputTimestamp(e),
-                this.maybeInvokeCallback()
+                this.worldLandmarks = [],
+                this.setLatestOutputTimestamp(e)
+            }
+            )),
+            this.outputSegmentationMasks && (r.addOutputStream("SEGMENTATION_MASK:" + y),
+            this.keepStreamAlive(y),
+            this.graphRunner.attachImageVectorListener(y, ((e,t)=>{
+                this.segmentationMasks = e.map((e=>this.convertToMPMask(e, !this.userCallback))),
+                this.setLatestOutputTimestamp(t)
+            }
+            )),
+            this.graphRunner.attachEmptyPacketListener(y, (e=>{
+                this.segmentationMasks = [],
+                this.setLatestOutputTimestamp(e)
             }
             )));
             const a = e.serializeBinary();
             this.setGraph(new Uint8Array(a), !0)
         }
     }
-    e.PoseLandmarker = b,
-    b.POSE_CONNECTIONS = [{
+    e.PoseLandmarker = _,
+    _.POSE_CONNECTIONS = [{
         start: 0,
         end: 1
     }, {
