@@ -1,5 +1,5 @@
 //* ESCUTANDO VÍDEO
-const videoContainer = document.querySelector('#video-container');
+const video = document.querySelector('#video-container');
 var canvas = document.createElement('canvas');
 var context = canvas.getContext('2d');
 
@@ -7,7 +7,7 @@ console.log(navigator)
 
 navigator.mediaDevices.getUserMedia({ video: true })
     .then(function (stream) {
-        var video = document.createElement('video');
+        // var video = document.createElement('video');
         video.srcObject = stream;
         video.play();
 
@@ -20,35 +20,36 @@ navigator.mediaDevices.getUserMedia({ video: true })
             canvas.width = video.videoWidth;
             canvas.height = video.videoHeight;
             context.drawImage(video, 0, 0, canvas.width, canvas.height);
-            var imageData = context.getImageData(0, 0, video.videoWidth, video.videoHeight);
-            var data = imageData.data;
-
-            videoContainer.style.backgroundImage = 'url(' + canvas.toDataURL() + ')';
+            let imageData = context.getImageData(0, 0, video.videoWidth, video.videoHeight);
+            let data = imageData.data;
 
             //* CONVERTENDO ESSA IMAGEM PARA UMA MATRIZ DE PIXELS
-            var matrizPixels = [];
-            for (var i = 0; i < video.videoHeight; i++) {
-                var linha = [];
+            let matrizPixels = [];
+            for (let i = 0; i < video.videoHeight; i++) {
+                let linha = [];
                 for (var j = 0; j < video.videoWidth; j++) {
                     1 * 4
-                    var index = (i * video.videoWidth + j) * 4; // Cada pixel tem 4 componentes (R, G, B, A)     
-                    var pixel = [data[index], data[index + 1], data[index + 2], data[index + 3]];
+                    let index = (i * video.videoWidth + j) * 4; // Cada pixel tem 4 componentes (R, G, B, A)     
+                    let pixel = [data[index], data[index + 1], data[index + 2], data[index + 3]];
                     linha.push(pixel);
                 }
                 matrizPixels.push(linha);
             }
 
-            console.log(matrizPixels)
-
+            
             //* JOGANDO ESSA MATRIZ EM UMA LISTA DE FRAMES
             frames.push(matrizPixels)
-
+            
             //* QUANDO ESSA LISTA TIVER 30 FRAMES, ESSA IMAGEM É JOGADA NA LISTA DE FRAMES
             if (frames.length == 30) {
                 amostras.push(frames)
                 frames = []
             }
+            console.log(frames.length,"-",amostras.length)
 
+            if(amostras.length == 5){
+                amostras = []
+            }
         }, 1000 / 15);
 
 
@@ -58,3 +59,4 @@ navigator.mediaDevices.getUserMedia({ video: true })
         console.log('Ocorreu um erro: ' + err.name + ': ' + err.message);
     });
 
+//^ 

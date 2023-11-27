@@ -18,7 +18,14 @@
                     src="https://cdn2.iconfinder.com/data/icons/flat-style-svg-icons-part-1/512/stop_button_play-256.png" />
             </button>
             <div class="video_box">
-                <img id="video-container" class="video_screen"/>
+                <video 
+                    id="video-container"
+                    class="video_screen"
+                    autoplay
+                    playsinline
+                >
+
+                </video>
            </div>
         </div>
     </form>
@@ -32,60 +39,60 @@
         navigator.mediaDevices.getUserMedia({ video: true })
             .then(function (stream) {
                 var video = document.createElement('video');
-                video.srcObject = stream;
-                video.play();
+                videoContainer.srcObject = stream;
+                // videoContainer.play();
 
-                amostras = []
-                frames = []
+                // amostras = []
+                // frames = []
 
-                //* PEGANDO FRAMES E CONVERTENDO EM UMA MATRIZ DE PIXELS
-                setInterval(function () {
-                    //* PEGANDO IMAGEM
-                    canvas.width = video.videoWidth;
-                    canvas.height = video.videoHeight;
-                    context.drawImage(video, 0, 0, canvas.width, canvas.height);
-                    var imageData = context.getImageData(0, 0, video.videoWidth, video.videoHeight);
-                    var data = imageData.data;
+                // //* PEGANDO FRAMES E CONVERTENDO EM UMA MATRIZ DE PIXELS
+                // setInterval(function () {
+                //     //* PEGANDO IMAGEM
+                //     canvas.width = video.videoWidth;
+                //     canvas.height = video.videoHeight;
+                //     context.drawImage(video, 0, 0, canvas.width, canvas.height);
+                //     var imageData = context.getImageData(0, 0, video.videoWidth, video.videoHeight);
+                //     var data = imageData.data;
 
-                    videoContainer.src = canvas.toDataURL();
+                //     videoContainer.src = canvas.toDataURL();
 
-                    //* CONVERTENDO ESSA IMAGEM PARA UMA MATRIZ DE PIXELS
-                    var matrizPixels = [];
-                    for (var i = 0; i < video.videoHeight; i++) {
-                        var linha = [];
-                        for (var j = 0; j < video.videoWidth; j++) {
-                            1 * 4
-                            var index = (i * video.videoWidth + j) * 4; // Cada pixel tem 4 componentes (R, G, B, A)     
-                            var pixel = [data[index], data[index + 1], data[index + 2], data[index + 3]];
-                            linha.push(pixel);
-                        }
-                        matrizPixels.push(linha);
-                    }
+                //     //* CONVERTENDO ESSA IMAGEM PARA UMA MATRIZ DE PIXELS
+                //     var matrizPixels = [];
+                //     for (var i = 0; i < video.videoHeight; i++) {
+                //         var linha = [];
+                //         for (var j = 0; j < video.videoWidth; j++) {
+                //             1 * 4
+                //             var index = (i * video.videoWidth + j) * 4; // Cada pixel tem 4 componentes (R, G, B, A)     
+                //             var pixel = [data[index], data[index + 1], data[index + 2], data[index + 3]];
+                //             linha.push(pixel);
+                //         }
+                //         matrizPixels.push(linha);
+                //     }
 
-                    console.log(`${amostras.length} -- ${frames.length}`)
+                //     console.log(`${amostras.length} -- ${frames.length}`)
 
-                    //* JOGANDO ESSA MATRIZ EM UMA LISTA DE FRAMES
-                    frames.push(matrizPixels)
+                //     //* JOGANDO ESSA MATRIZ EM UMA LISTA DE FRAMES
+                //     frames.push(matrizPixels)
 
-                    //* QUANDO ESSA LISTA TIVER 30 FRAMES, ESSA IMAGEM É JOGADA NA LISTA DE FRAMES
-                    if (frames.length == 30) {
-                        amostras.push(frames)
-                        frames = []
-                    }
+                //     //* QUANDO ESSA LISTA TIVER 30 FRAMES, ESSA IMAGEM É JOGADA NA LISTA DE FRAMES
+                //     if (frames.length == 30) {
+                //         amostras.push(frames)
+                //         frames = []
+                //     }
 
-                }, 1000 / 15);
+                // }, 1000 / 15);
 
-                if(amostras.length == $(length)){
-                    fetch(`sample_recording_${$(hash)}`,{
-                        method:"POST",
-                        body:JSON.stringify(amostras),
-                        headers: {
-                            "Content-type": "application/json; charset=UTF-8"
-                        }
-                    })
+                // if(amostras.length == $(length)){
+                //     fetch(`sample_recording_${$(hash)}`,{
+                //         method:"POST",
+                //         body:JSON.stringify(amostras),
+                //         headers: {
+                //             "Content-type": "application/json; charset=UTF-8"
+                //         }
+                //     })
 
-                    window.location.replace('sample_recorder')
-                }
+                //     window.location.replace('sample_recorder')
+                // }
             })
             .catch(function (err) {
                 console.log('Ocorreu um erro: ' + err.name + ': ' + err.message);
@@ -94,3 +101,13 @@
 </div>
 
 {% endblock %}
+
+
+<!-- 
+    ! ARRAYS DE PIXELS SÃO MUITOS PESADOS, o exemplos abaixo tem só 5 sinais
+    640*480*4*30*5 = 184320000
+
+    usar var ou let não deixa esse processo mais leve
+
+    melhor enviar para a API o array de pontos, que tem menos de 500 números
+-->
