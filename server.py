@@ -1,13 +1,13 @@
-from flask import Flask, render_template, request, redirect, url_for, Response
+from flask import Flask, render_template, request, redirect, url_for, Response,jsonify
 from flask_login import login_user, current_user, login_required, LoginManager
 import os
+import numpy as np
 import hashlib
 import json
 
 from static.utils.classes.userAuth_classes import UserAuthentication, UserRegistration
 from static.utils.classes.sample import SampleRecording
 from static.utils.classes.user import user
-from static.utils.functions.translator import translator
 from static.utils.functions.renomeador_de_pastas import renomeador_de_pastas
 
 abacate = Flask(__name__)
@@ -186,18 +186,20 @@ def home():
 def translate_screen():
     return render_template('translator.html')
 
-@abacate.route("/translator", methods=["POST"])
-def translator():
-    if request.method == "POST" and request.data :
-        resposta = []
+# @abacate.route("/translator", methods=["POST"])
+# def translator():
+#     if request.method == "POST" and request.data :
+#         resposta = []
+#         sinais = json.loads(request.data)
+#         #sinais = np.array(sinais[0])
 
-        for palavra in json.loads(request.data):
-            resposta.append(translator(palavra))
+#         #for palavra in json.loads(request.data):
+#         #    resposta.append(translator(palavra))
 
-        return Response(resposta.join(" "))
+#         return jsonify({'result': 'ATUM COM ARROZ'})
 
-if __name__ == "__main__":
-    abacate.run(host="0.0.0.0",port=5000,debug=True, ssl_context='adhoc')
+# if __name__ == "__main__":
+#     abacate.run(host="0.0.0.0",port=5000,debug=True, ssl_context='adhoc')
 
 
 #^ IF THE skeleton IS SHOWING WILL BE A SESSION

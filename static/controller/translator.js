@@ -93,6 +93,10 @@ import {
       return;
     }
 
+    if(processando == true){
+      return;
+    }
+
     if(sinais.length == 5 && sinais[-1] && sinais[-1].length == 30){
       sinais = []
     }
@@ -166,6 +170,7 @@ import {
         });
       }
 
+      console.log("hand_landmark:",hand_landmark.length)
       hand_landmark.forEach((point) => {
         frame.push(point.x)
         frame.push(point.y)
@@ -196,6 +201,7 @@ import {
           drawingUtils.drawConnectors(pose_landmark, PoseLandmarker.POSE_CONNECTIONS);
         }
 
+        console.log("pose_landmark:",pose_landmark.length)
         pose_landmark.forEach((point) => {
           frame.push(point.x)
           frame.push(point.y)
@@ -230,13 +236,32 @@ import {
           document.getElementById("botao-play-icon").src = "https://cdn4.iconfinder.com/data/icons/round-buttons/128/red_play.png"    
           document.getElementById("botao-play-icon").style.filter = "grayscale(100%)"
           document.getElementById("botao-play-icon").style.cursor = "default"
+          canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
+          canvasCtx.save();
 
           //* ENVIANDO REQUISIÇÃO PARA O SERVIDOR PYTHON
-          var xhr = new XMLHttpRequest()
+          // var xhr = new XMLHttpRequest()
 
-          xhr.open("POST","/translator",false)
-          xhr.setRequestHeader("Content-Type", "application/json");
-          xhr.send(JSON.stringify(sinais))
+          // xhr.open("POST","/translator",false)
+          // xhr.setRequestHeader("Content-Type", "application/json");
+          // xhr.send(JSON.stringify(sinais))
+
+          // xhr.onload((resp) => {
+          //   traducoes.innerText = resp
+          // })
+
+          fetch('/translator',{
+            method:"POST",
+            headers:{
+              'Content-type': 'application/json'
+            },
+            body: JSON.stringify(sinais)
+          }).then(response => {
+            console.log("response: ",response)
+          }).then(data => {
+            console.log("data:",data)
+            traducoes.innerText = data
+          })
         }
       }
     }
