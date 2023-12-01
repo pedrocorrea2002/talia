@@ -32,7 +32,7 @@ def main():
 @abacate.route("/home", methods=["GET", "POST"])
 def home():
     if str(current_user)[:-37] != "<flask_login.mixins.AnonymousUs":
-        return redirect(url_for("main_buttons"))
+        return redirect(url_for("big_buttons"))
 
     logon_form = UserRegistration()
     login_form = UserAuthentication()
@@ -68,7 +68,7 @@ def home():
         else:
             os.mkdir(user_folder)
             login_user(user(logon_form.username.data, final_hash))
-            return redirect(url_for("main_buttons"))
+            return redirect(url_for("big_buttons"))
 
     elif (
         request.method == "POST"
@@ -92,7 +92,7 @@ def home():
         # * SE A PASTA EXISTE O LOGIN É FEITO, SE ELA NÃO EXISTE O LOGIN É NEGADO
         if os.path.exists(os.path.join(user_folder)):
             login_user(user(login_form.username.data, final_hash))
-            return redirect(url_for("main_buttons"))
+            return redirect(url_for("big_buttons"))
         else:
             return render_template(
                 "home.html",
@@ -110,10 +110,10 @@ def home():
         exist_user_login=True,
     )
 
-@abacate.route("/main_buttons", methods=["GET"])
+@abacate.route("/big_buttons", methods=["GET"])
 @login_required
-def main_buttons():
-    return render_template("main_buttons.html", username=current_user.username)
+def big_buttons():
+    return render_template("big_buttons.html", username=current_user.username)
 
 
 @abacate.route("/sample_recorder", methods=["GET", "POST"])
@@ -182,8 +182,12 @@ def video_feed(hash):
     return Response(recorder(hash,sample_name,folder_range),
         mimetype = "multipart/x-mixed-replace; boundary=frame")
 
+@abacate.route("/translator")
+def translator():
+    return render_template('translator.html')
+
 if __name__ == "__main__":
-    abacate.run(host="0.0.0.0",port=5000,debug=True,ssl_context='adhoc')
+    abacate.run(host="0.0.0.0",port=5000,debug=True)#ssl_context='adhoc')
 
 
 #^ IF THE skeleton IS SHOWING WILL BE A SESSION

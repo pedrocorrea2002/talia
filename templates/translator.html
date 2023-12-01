@@ -1,0 +1,26 @@
+{% extends 'main logado2.html'%}
+{% block conteudo %}
+  <div id="conteiner-camera-historico">
+    <div id="camera-container">
+      <img src="" id="frame">
+      <!-- Aqui você pode adicionar um elemento de vídeo para a câmera ou outro conteúdo relacionado à câmera. -->
+    </div>
+    <div id="historico-palavras">
+      <h2>Histórico de Palavras</h2>
+      <!-- Aqui você pode adicionar o histórico de palavras ou outro conteúdo relacionado ao histórico. -->
+    </div>
+  </div>
+  <div id="botoes-container">
+    <button id="botao-esquerda" style="background-color: white;">
+      <img 
+        style="height: 60px;"
+        class="botao-icone" 
+        src="https://cdn4.iconfinder.com/data/icons/round-buttons/128/red_play.png"
+      >
+    </button>
+    <p id="campo-texto" rows="6"></p>
+    <button id="botao-esquerda">
+      <img class="botao-icone" src="https://cdn0.iconfinder.com/data/icons/human-figures-outline/60/Standard-Person-people-stickman-being-256.png">
+    </button>
+  </div>
+{% endblock %}
