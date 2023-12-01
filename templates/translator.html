@@ -1,18 +1,26 @@
 {% extends 'main logado2.html'%}
 {% block conteudo %}
 <div id="gravador-tela">
-  <div class="video_box">
-    <video id="video-container" class="video_screen" autoplay playsinline></video>
+  <div class="video_box" id="video-box">
+    <video id="video-container" class="video_screen" autoplay playsinline>
+    </video>
     <div id="canvas_container">
       <canvas id="output_canvas" class="output_canvas"></canvas>
     </div>
   </div>
   <div id="botoes-container" class="webcamButton">
+    <div id="barra_sinais"></div>
     <button id="botao-play" style="background-color: white;padding: 0px;" class="botao-baixo">
       <img style="height: 100%;" class="botao-icone" id="botao-play-icon"
         src="https://cdn4.iconfinder.com/data/icons/round-buttons/128/red_play.png">
     </button>
-    <p id="traducoes"></p>
+    <div id="container-traducoes">
+      <div id="metadados-box">
+        <p id="metadados-sinais"></p>
+        <p id="metadados-frames"></p>
+      </div>
+      <p id="traducoes"></p>
+    </div>
     <button id="botao-esqueleto" class="botao-baixo">
       <img class="botao-icone"
         src="https://cdn0.iconfinder.com/data/icons/human-figures-outline/60/Standard-Person-people-stickman-being-256.png">

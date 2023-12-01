@@ -297,6 +297,10 @@ nav a {
     height: calc(65vh - 50px);
 
     background-color: black;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .video_screen {
@@ -304,6 +308,13 @@ nav a {
     aspect-ratio: 4/3;
 
     background-color: white;
+}
+#loading{
+    width: 100px;
+    height: 100px;
+
+    z-index: 10;
+    position: absolute;
 }
 
 #canvas_container {
@@ -315,6 +326,10 @@ nav a {
 
     height: calc(65vh - 50px);
     min-width: 70vw;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .output_canvas{
@@ -358,12 +373,47 @@ nav a {
     height: calc(15vh - 20px);
 }
 
-#traducoes {
+#container-traducoes {
     width: 100%;
     height: 15vh;
 
     border: 1px solid #000;
     border-radius: 10px;
+}
+
+#metadados-box{
+    height: 20px;
+    min-width: 100%; 
+
+    display: flex;
+    flex-direction: row;
+}
+
+#metadados-sinais{
+    height: 20px;
+    min-width: calc(50% - 10px);
+    text-align: start;
+    margin-left:10px;
+    margin-top: 0px;
+}
+
+#metadados-frames{
+    height: 20px;
+    min-width: calc(50% - 10px);
+    text-align: end;
+    margin-right:10px;
+    margin-top: 0px;
+}
+
+#traducoes{
+    font-size: 20px;
+    font-weight: bold;
+
+    display: flex;
+    height: 100%;
+    min-width: 100%;
+    vertical-align: middle;
+    text-align: center;
 }
 
 @media (max-width: 500px) {

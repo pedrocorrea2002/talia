@@ -19,7 +19,9 @@ import {
     DrawingUtils
   } from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.0";
   
-  // const barra_sinais = document.getElementById("barra_sinais");
+  const traducoes = document.getElementById("traducoes");
+  const metadados_sinais = document.getElementById("metadados-sinais");
+  const metadados_frames = document.getElementById("metadados-frames");
   
   let poseLandmarker = undefined;
   let handLandmarker = undefined;
@@ -29,7 +31,9 @@ import {
   let sinais = [];
   let amostra = [];
   let gravando = true;
+  let processando = false;
   let show_landmarks = true;
+  const gif_loading = "<img id='loading' src='/static/styles/loading-circles-acs-rectangles.webp'/>";
   
   // Before we can use HandLandmarker class we must wait for it to finish
   // loading. Machine Learning models can be large and take a moment to
@@ -52,13 +56,15 @@ import {
         delegate: "GPU"
       },
       runningMode: runningMode,
-      numPoses: 1
+      numPoses: 1,
+      min_pose_presence_confidence:0.7
     });
   };
 
   createLandmarkers();
   
   const video = document.getElementById("video-container");
+  const videoBox = document.getElementById("canvas_container")
   const canvasElement = document.getElementById(
     "output_canvas"
   );
@@ -79,22 +85,29 @@ import {
   
   // // Enable the live webcam view and start detection.
   function enableCam(event) {
-    console.log("wait a minute")
+    //* ADICIONA O LOADING
+    // videoBox.innerHTML += gif_loading
 
     if (!handLandmarker || !poseLandmarker) {
       console.log("Wait! objectDetector not loaded yet.");
       return;
     }
 
-    if(sinais.length == 5 && sinais[-1].length == 30){
+    if(sinais.length == 5 && sinais[-1] && sinais[-1].length == 30){
       sinais = []
     }
   
     if (webcamRunning === true) {
       webcamRunning = false;
+      document.getElementById("botao-play-icon").src = "https://cdn4.iconfinder.com/data/icons/round-buttons/128/red_play.png"
+      metadados_sinais.innerText = ""
+      metadados_frames.innerText = ""
+      traducoes.innerText = ""
+
       // enableWebcamButton.innerText = "ENABLE PREDICTIONS";
     } else {
       webcamRunning = true;
+      document.getElementById("botao-play-icon").src = "https://cdn2.iconfinder.com/data/icons/flat-style-svg-icons-part-1/512/stop_button_play-256.png"
       // enableWebcamButton.innerText = "DISABLE PREDICTIONS";
     }
   
@@ -104,13 +117,12 @@ import {
     };
   
     // Activate the webcam stream.
-    navigator.mediaDevices.getUserMedia(constraints).then((stream) => {
-      video.srcObject = stream;
-      video.addEventListener("loadeddata", predictWebcam);
-
-      console.log("aaa")
-      document.getElementById("botao-play-icon").src = "https://cdn2.iconfinder.com/data/icons/flat-style-svg-icons-part-1/512/stop_button_play-256.png"
-    });
+    if(!processando){
+      navigator.mediaDevices.getUserMedia(constraints).then((stream) => {
+        video.srcObject = stream;
+        video.addEventListener("loadeddata", predictWebcam);
+      });
+    }
   }
   
   let lastVideoTime = -1;
@@ -118,7 +130,9 @@ import {
   let resultsPose = undefined;
 
   async function predictWebcam() {
-    console.log("predict")
+    // if(document.getElementById("loading")){
+    //   document.getElementById("loading").remove()
+    // }
 
     canvasElement.style.width = video.videoWidth;;
     canvasElement.style.height = video.videoHeight;
@@ -152,19 +166,19 @@ import {
         });
       }
 
-      for(const point in hand_landmark){
-        frame += point.x
-        frame += point.y
-        frame += point.z
-      }
+      hand_landmark.forEach((point) => {
+        frame.push(point.x)
+        frame.push(point.y)
+        frame.push(point.z)
+      })
     }
     
     let maos_faltantes = 2 - resultsHands.landmarks.length
 
     for(let index = 0; index < (maos_faltantes*21 + 1); index++){
-      frame += 0
-      frame += 0
-      frame += 0
+      frame.push(0)
+      frame.push(0)
+      frame.push(0)
     }
 
     
@@ -172,7 +186,7 @@ import {
 
     // Percorrendo pontos do corpo
     if (resultsPose.landmarks) {
-      console.log("resultsPose: ",resultsPose.landmarks)
+      // console.log("resultsPose: ",resultsPose.landmarks)
       for (const pose_landmark of resultsPose.landmarks) {
         // Desenhando o esqueleto ou não, conforme escolha do usuário
         if(show_landmarks){
@@ -182,41 +196,58 @@ import {
           drawingUtils.drawConnectors(pose_landmark, PoseLandmarker.POSE_CONNECTIONS);
         }
 
-        
-        for(const point in pose_landmark){
-          frame += point.x
-          frame += point.y
-          frame += point.z
-        }
+        pose_landmark.forEach((point) => {
+          frame.push(point.x)
+          frame.push(point.y)
+          frame.push(point.z)
+        })
       };
     }else{
       for(let index = 0; index < 34; index++){
-        frame += 0
-        frame += 0
-        frame += 0
+        frame.push(0)
+        frame.push(0)
+        frame.push(0)
       }
     }
 
     if(gravando){
       amostra.push(frame)
-
+      metadados_frames.innerText = `imagens capturadas ${amostra.length}/30`
+      
       if(amostra.length == 30){
         sinais.push(amostra)
+        metadados_sinais.innerText = `${sinais.length} sinais`
         amostra = []
-
-        // barra_sinais.innerHTML += "<div class='marcador_sinal'></div>"
-        console.log(`frame: ${frame} |frame`)
+        
+        // console.log(`frame: ${frame} |frame`)
         console.log(`${frame.length} -- ${amostra.length} -- ${sinais.length}`)
 
-        // if(sinais.length == 5 && sinais[4].length == 30){
-        //   gravando = false
-        // }
+        if(sinais.length == 5 && sinais[4].length == 30){
+          gravando = false
+          processando = true
+          traducoes.innerText = "Processando tradução ..."
+          webcamRunning = false;
+          document.getElementById("botao-play-icon").src = "https://cdn4.iconfinder.com/data/icons/round-buttons/128/red_play.png"    
+          document.getElementById("botao-play-icon").style.filter = "grayscale(100%)"
+          document.getElementById("botao-play-icon").style.cursor = "default"
+
+          //* ENVIANDO REQUISIÇÃO PARA O SERVIDOR PYTHON
+          var xhr = new XMLHttpRequest()
+
+          xhr.open("POST","/translator",false)
+          xhr.setRequestHeader("Content-Type", "application/json");
+          xhr.send(JSON.stringify(sinais))
+        }
       }
     }
   
     // Call this function again to keep predicting when the browser is ready.
     if (webcamRunning === true) {
-      window.requestAnimationFrame(predictWebcam);
+      setTimeout(() => {
+        window.requestAnimationFrame(predictWebcam);
+      },1000/15)
+    }else{
+      canvasCtx.clearRect(0,0,canvasElement.width,canvasElement.height)
     }
   }
   
