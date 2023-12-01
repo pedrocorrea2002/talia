@@ -2,15 +2,18 @@
 {% block conteudo %}
 <div id="gravador-tela">
   <div class="video_box">
-    <video id="video-container" class="video_screen" autoplay playsinline>
+    <video id="video-container" class="video_screen" autoplay playsinline></video>
+    <div id="canvas_container">
+      <canvas id="output_canvas" class="output_canvas"></canvas>
+    </div>
   </div>
-  <div id="botoes-container">
-    <button id="botao-baixo" style="background-color: white;padding: 0px;">
-      <img style="height: 100%;" class="botao-icone"
+  <div id="botoes-container" class="webcamButton">
+    <button id="botao-play" style="background-color: white;padding: 0px;" class="botao-baixo">
+      <img style="height: 100%;" class="botao-icone" id="botao-play-icon"
         src="https://cdn4.iconfinder.com/data/icons/round-buttons/128/red_play.png">
     </button>
     <p id="traducoes"></p>
-    <button id="botao-baixo">
+    <button id="botao-esqueleto" class="botao-baixo">
       <img class="botao-icone"
         src="https://cdn0.iconfinder.com/data/icons/human-figures-outline/60/Standard-Person-people-stickman-being-256.png">
     </button>
@@ -18,5 +21,6 @@
   <div id="historico-palavras">
     <h2>Histórico de Palavras</h2>
   </div>
+  <script src="{{url_for('static', filename='controller/translator.js')}}" type="module" defer></script>
 </div>
 {% endblock %}

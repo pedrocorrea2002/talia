@@ -292,6 +292,7 @@ nav a {
 }
 
 .video_box {
+    z-index: 10;
     min-width: 70vw;
     height: calc(65vh - 50px);
 
@@ -303,6 +304,23 @@ nav a {
     aspect-ratio: 4/3;
 
     background-color: white;
+}
+
+#canvas_container {
+    transform: rotateY(180deg);
+    -webkit-transform: rotateY(180deg);
+    -moz-transform: rotateY(180deg);
+  
+    position: absolute; left: 0px; top: calc(15vh + 20px);
+    opacity: 50%;
+
+    height: calc(65vh - 50px);
+    min-width: 70vw;
+}
+
+.output_canvas{
+    height: calc(65vh - 50px);
+    aspect-ratio: 4/3;
 }
 
 #historico-palavras{
@@ -321,7 +339,7 @@ nav a {
     bottom: 0px;
 }
 
-#botao-baixo {
+.botao-baixo {
     height: 15vh;
     aspect-ratio: 1/1;
 
