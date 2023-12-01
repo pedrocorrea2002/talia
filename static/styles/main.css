@@ -307,12 +307,11 @@ nav a {
 }
 
 #canvas_container {
-    transform: rotateY(180deg);
+    /* transform: rotateY(180deg);
     -webkit-transform: rotateY(180deg);
-    -moz-transform: rotateY(180deg);
+    -moz-transform: rotateY(180deg); */
   
     position: absolute; left: 0px; top: calc(15vh + 20px);
-    opacity: 50%;
 
     height: calc(65vh - 50px);
     min-width: 70vw;

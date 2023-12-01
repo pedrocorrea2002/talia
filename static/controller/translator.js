@@ -19,7 +19,7 @@ import {
     DrawingUtils
   } from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.0";
   
-  const barra_sinais = document.getElementById("barra_sinais");
+  // const barra_sinais = document.getElementById("barra_sinais");
   
   let poseLandmarker = undefined;
   let handLandmarker = undefined;
@@ -90,13 +90,13 @@ import {
       sinais = []
     }
   
-    // if (webcamRunning === true) {
-    //   webcamRunning = false;
-    //   enableWebcamButton.innerText = "ENABLE PREDICTIONS";
-    // } else {
-    //   webcamRunning = true;
-    //   enableWebcamButton.innerText = "DISABLE PREDICTIONS";
-    // }
+    if (webcamRunning === true) {
+      webcamRunning = false;
+      // enableWebcamButton.innerText = "ENABLE PREDICTIONS";
+    } else {
+      webcamRunning = true;
+      // enableWebcamButton.innerText = "DISABLE PREDICTIONS";
+    }
   
     // getUsermedia parameters.
     const constraints = {
@@ -118,7 +118,7 @@ import {
   let resultsPose = undefined;
 
   async function predictWebcam() {
-    console.log("aaaaaaaaa")
+    console.log("predict")
 
     canvasElement.style.width = video.videoWidth;;
     canvasElement.style.height = video.videoHeight;
@@ -146,7 +146,7 @@ import {
       // Desenhando o esqueleto ou não, conforme escolha do usuário
       if(show_landmarks){
         drawingUtils.drawLandmarks(hand_landmark, { color: "#FF0000", lineWidth: 2 });
-        drawConnectors(canvasCtx,hand_landmark, HAND_CONNECTIONS, {
+        drawingUtils.drawConnectors(hand_landmark, HandLandmarker.HAND_CONNECTIONS, {
           color: "#00FF00",
           lineWidth: 5
         });
@@ -204,7 +204,7 @@ import {
         sinais.push(amostra)
         amostra = []
 
-        barra_sinais.innerHTML += "<div class='marcador_sinal'></div>"
+        // barra_sinais.innerHTML += "<div class='marcador_sinal'></div>"
         console.log(`frame: ${frame} |frame`)
         console.log(`${frame.length} -- ${amostra.length} -- ${sinais.length}`)
 
