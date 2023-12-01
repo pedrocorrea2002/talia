@@ -25,6 +25,8 @@ header {
     background-color: #333;
     color: #fff;
     padding: 10px 0;
+
+    height: 15vh;
 }
 
 header #upper {
@@ -250,18 +252,6 @@ nav a {
 
 }
 
-.video_box {
-    min-width: calc(100vw - 60px);
-    min-height: calc(100% - 40px);
-
-    background-color: black;
-}
-
-.video_screen {
-    max-height: 100%;
-    aspect-ratio: 1/1;
-}
-
 .play-button {
     position: absolute;
     z-index: 10;
@@ -294,27 +284,52 @@ nav a {
 }
 
 /** TELA DO TRADUTOR */
+#gravador-tela{
+    min-height: 80vh;
+
+    display: flex;
+    flex-direction: row;
+}
+
+.video_box {
+    min-width: 70vw;
+    height: calc(65vh - 50px);
+
+    background-color: black;
+}
+
+.video_screen {
+    height: 100%;
+    aspect-ratio: 4/3;
+
+    background-color: white;
+}
+
+#historico-palavras{
+    min-height: 100%;
+    width: 30vw;
+    border: 1px solid black;
+}
 
 #botoes-container {
-    width: 100vw;
-    margin-top: 20px;
+    width: 70vw;
 
     display: flex;
     align-items: center;
 
     position: fixed;
-    bottom: 20px;
+    bottom: 0px;
 }
 
-#botao-esquerda {
-    max-height: min-content;
+#botao-baixo {
+    height: 15vh;
     aspect-ratio: 1/1;
 
     background-color: #333;
     color: #fff;
     border: none;
 
-    /* padding: 10px 10px; */
+    padding: 10px 10px;
     border-radius: 10px;
     margin-left: 10px;
     margin-right: 10px;
@@ -323,15 +338,13 @@ nav a {
 }
 
 .botao-icone{
-    height: 50px;
+    height: calc(15vh - 20px);
 }
 
-#campo-texto {
+#traducoes {
     width: 100%;
-    /* O campo de texto se estenderá até o final do histórico */
-    height: 50px;
+    height: 15vh;
 
-    padding: 10px;
     border: 1px solid #000;
     border-radius: 10px;
 }
