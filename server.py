@@ -1,14 +1,13 @@
-from flask import Flask, render_template, request, redirect, url_for, Response,jsonify
-from flask_login import login_user, current_user, login_required, LoginManager
 import os
-import numpy as np
 import hashlib
 import json
+from flask import Flask, render_template, request, redirect, url_for, Response,jsonify
+from flask_login import login_user, current_user, login_required, LoginManager
 
 from static.utils.classes.userAuth_classes import UserAuthentication, UserRegistration
-from static.utils.classes.sample import SampleRecording
 from static.utils.classes.user import user
-from static.utils.functions.renomeador_de_pastas import renomeador_de_pastas
+from static.utils.functions.sinais_translator import sinais_translator
+
 
 abacate = Flask(__name__)
 abacate.config["SECRET_KEY"] = "secret"
@@ -194,9 +193,9 @@ def translator():
         #sinais = np.array(sinais[0])
 
         for palavra in sinais:
-           resposta.append(translator(palavra))
+           resposta.append(sinais_translator(palavra))
 
-           return " ".join(resposta)
+        return jsonify(result=" ".join(resposta))
 
 if __name__ == "__main__":
     abacate.run(host="0.0.0.0",port=5000,debug=True, ssl_context='adhoc')

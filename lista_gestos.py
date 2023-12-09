@@ -40,6 +40,8 @@ lista_nomes = [
 "_3"
 ]
 
+#! COLOCAR ACENTOS
+
 # PERTENCE + NÓS = NOSSO
 # NÓS + PERTENCE = NOSSO
 
