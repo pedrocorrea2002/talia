@@ -186,20 +186,20 @@ def home():
 def translate_screen():
     return render_template('translator.html')
 
-# @abacate.route("/translator", methods=["POST"])
-# def translator():
-#     if request.method == "POST" and request.data :
-#         resposta = []
-#         sinais = json.loads(request.data)
-#         #sinais = np.array(sinais[0])
+@abacate.route("/translator", methods=["POST"])
+def translator():
+    if request.method == "POST" and request.data :
+        resposta = []
+        sinais = json.loads(request.data)
+        #sinais = np.array(sinais[0])
 
-#         #for palavra in json.loads(request.data):
-#         #    resposta.append(translator(palavra))
+        for palavra in sinais:
+           resposta.append(translator(palavra))
 
-#         return jsonify({'result': 'ATUM COM ARROZ'})
+           return " ".join(resposta)
 
-# if __name__ == "__main__":
-#     abacate.run(host="0.0.0.0",port=5000,debug=True, ssl_context='adhoc')
+if __name__ == "__main__":
+    abacate.run(host="0.0.0.0",port=5000,debug=True, ssl_context='adhoc')
 
 
 #^ IF THE skeleton IS SHOWING WILL BE A SESSION

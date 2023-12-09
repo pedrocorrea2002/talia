@@ -170,7 +170,6 @@ import {
         });
       }
 
-      console.log("hand_landmark:",hand_landmark.length)
       hand_landmark.forEach((point) => {
         frame.push(point.x)
         frame.push(point.y)
@@ -180,17 +179,19 @@ import {
     
     let maos_faltantes = 2 - resultsHands.landmarks.length
 
-    for(let index = 0; index < (maos_faltantes*21 + 1); index++){
-      frame.push(0)
-      frame.push(0)
-      frame.push(0)
+    if(maos_faltantes != 0){
+      for(let index = 0; index < (maos_faltantes*21); index++){
+        frame.push(0)
+        frame.push(0)
+        frame.push(0)
+      }
     }
 
     
     canvasCtx.save()
 
     // Percorrendo pontos do corpo
-    if (resultsPose.landmarks) {
+    if (resultsPose.landmarks.length != 0) {
       // console.log("resultsPose: ",resultsPose.landmarks)
       for (const pose_landmark of resultsPose.landmarks) {
         // Desenhando o esqueleto ou não, conforme escolha do usuário
@@ -201,7 +202,6 @@ import {
           drawingUtils.drawConnectors(pose_landmark, PoseLandmarker.POSE_CONNECTIONS);
         }
 
-        console.log("pose_landmark:",pose_landmark.length)
         pose_landmark.forEach((point) => {
           frame.push(point.x)
           frame.push(point.y)
@@ -209,14 +209,16 @@ import {
         })
       };
     }else{
-      for(let index = 0; index < 34; index++){
+      for(let index = 0; index < 33; index++){
         frame.push(0)
         frame.push(0)
         frame.push(0)
       }
     }
-
+    
     if(gravando){
+      console.log(`${frame.length} -- ${amostra.length} -- ${sinais.length}`)
+      
       amostra.push(frame)
       metadados_frames.innerText = `imagens capturadas ${amostra.length}/30`
       
@@ -226,9 +228,8 @@ import {
         amostra = []
         
         // console.log(`frame: ${frame} |frame`)
-        console.log(`${frame.length} -- ${amostra.length} -- ${sinais.length}`)
 
-        if(sinais.length == 5 && sinais[4].length == 30){
+        if(sinais.length == 1 && sinais[0].length == 30){
           gravando = false
           processando = true
           traducoes.innerText = "Processando tradução ..."
@@ -256,11 +257,10 @@ import {
               'Content-type': 'application/json'
             },
             body: JSON.stringify(sinais)
-          }).then(response => {
-            console.log("response: ",response)
-          }).then(data => {
-            console.log("data:",data)
-            traducoes.innerText = data
+          }).then(response => response.json())
+          .then(content => {
+            console.log("data:",content)
+            traducoes.innerText = content.result
           })
         }
       }
