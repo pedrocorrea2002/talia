@@ -27,6 +27,7 @@ header {
     padding: 10px 0;
 
     height: 15vh;
+    width: 100%;
 }
 
 header #upper {
@@ -294,7 +295,7 @@ nav a {
 .video_box {
     z-index: 10;
     min-width: 70vw;
-    height: calc(65vh - 50px);
+    height: 65vh;
 
     background-color: black;
 
@@ -324,7 +325,7 @@ nav a {
   
     position: absolute; left: 0px; top: calc(15vh + 20px);
 
-    height: calc(65vh - 50px);
+    height: calc(70vh - 50px);
     min-width: 70vw;
 
     display: flex;
@@ -333,17 +334,45 @@ nav a {
 }
 
 .output_canvas{
-    height: calc(65vh - 50px);
+    height: calc(70vh - 50px);
     aspect-ratio: 4/3;
 }
-
-#historico-palavras{
-    min-height: 100%;
+#historico-container{
+    max-height: 85vh;
+    
     width: 30vw;
     border: 1px solid black;
 }
 
+#historico-title{
+    height: 30px;
+}
+
+#historico-palavras{
+    width: 100%;
+    height: calc(85vh - 120px);
+
+    overflow:scroll;
+    overflow-x:hidden;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.historico-phrase{
+    width: calc(100% - 40px);
+    min-height: calc(min-content + 20px);
+    padding: 10px; 
+
+    border-radius: 10px;
+    background-color: #dfd3b7;
+    text-align: start;
+
+}
+
 #botoes-container {
+    height: 15vh;
     width: 70vw;
 
     display: flex;
@@ -351,6 +380,8 @@ nav a {
 
     position: fixed;
     bottom: 0px;
+
+    background-color: red;
 }
 
 .botao-baixo {
@@ -425,5 +456,22 @@ nav a {
 
     .auth-body-half {
         min-height: min-content;
+    }
+
+    #gravador-tela{
+        min-width: 100vw;
+        flex-direction: column;
+
+        overflow:scroll;
+        overflow-x:hidden;
+    }
+
+    #historico-container{
+        min-width: 100vw;
+    }
+
+    #botoes-container{
+        min-width: 100vw;
+        z-index: 50;
     }
 }

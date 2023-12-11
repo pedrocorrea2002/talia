@@ -3,7 +3,7 @@ from keras import models
 from lista_gestos import lista_nomes
 
 #* variáveis globais
-model = models.load_model("gestos.h5")
+model = models.load_model("gestos5.h5")
 threshold = 0.9
 actions = np.array(lista_nomes)
 
@@ -18,10 +18,6 @@ def sinais_translator(input):
 
     #* traduzindo
     resp = model.predict(pred_array)[0]
-
-    print("translation0: ",np.argmax(resp))
-    print("translation1: ",actions[np.argmax(resp)])
-    print("translation2: ",actions[np.argmax(resp)][0])
 
     if resp[np.argmax(resp)] > threshold and actions[np.argmax(resp)][0] != "_" :
         return actions[np.argmax(resp)]

@@ -8,27 +8,29 @@
       <canvas id="output_canvas" class="output_canvas"></canvas>
     </div>
   </div>
-  <div id="botoes-container" class="webcamButton">
-    <div id="barra_sinais"></div>
-    <button id="botao-play" style="background-color: white;padding: 0px;" class="botao-baixo">
-      <img style="height: 100%;" class="botao-icone" id="botao-play-icon"
-        src="https://cdn4.iconfinder.com/data/icons/round-buttons/128/red_play.png">
-    </button>
-    <div id="container-traducoes">
-      <div id="metadados-box">
-        <p id="metadados-sinais"></p>
-        <p id="metadados-frames"></p>
-      </div>
-      <p id="traducoes"></p>
-    </div>
-    <button id="botao-esqueleto" class="botao-baixo">
-      <img class="botao-icone"
-        src="https://cdn0.iconfinder.com/data/icons/human-figures-outline/60/Standard-Person-people-stickman-being-256.png">
-    </button>
-  </div>
-  <div id="historico-palavras">
-    <h2>Histórico de Palavras</h2>
+  <div id="historico-container">
+    <h2 id="historico-title">Histórico de Palavras</h2>
+    <div id="historico-palavras"></div>
   </div>
   <script src="{{url_for('static', filename='controller/translator.js')}}" type="module" defer></script>
+</div>
+
+<div id="botoes-container" class="webcamButton">
+  <div id="barra_sinais"></div>
+  <button id="botao-play" style="background-color: white;padding: 0px;" class="botao-baixo">
+    <img style="height: 100%;" class="botao-icone" id="botao-play-icon"
+      src="https://cdn4.iconfinder.com/data/icons/round-buttons/128/red_play.png">
+  </button>
+  <div id="container-traducoes">
+    <div id="metadados-box">
+      <p id="metadados-sinais"></p>
+      <p id="metadados-frames"></p>
+    </div>
+    <p id="traducoes"></p>
+  </div>
+  <button id="botao-esqueleto" class="botao-baixo">
+    <img class="botao-icone"
+      src="https://cdn0.iconfinder.com/data/icons/human-figures-outline/60/Standard-Person-people-stickman-being-256.png">
+  </button>
 </div>
 {% endblock %}
