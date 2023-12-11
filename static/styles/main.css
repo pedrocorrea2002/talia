@@ -19,12 +19,14 @@ body {
     padding: 0;
     display: flex;
     flex-direction: column;
+
+    overflow-x:hidden;
+    overflow-y:hidden;
 }
 
 header {
     background-color: #333;
     color: #fff;
-    padding: 10px 0;
 
     height: 15vh;
     width: 100%;
@@ -32,6 +34,7 @@ header {
 
 header #upper {
     width: 100vw;
+    margin-top: 10px;
 
     display: flex;
     justify-content: space-between;
@@ -286,16 +289,16 @@ nav a {
 
 /** TELA DO TRADUTOR */
 #gravador-tela{
-    min-height: 80vh;
+    min-height: 85vh;
 
     display: flex;
     flex-direction: row;
 }
 
 .video_box {
-    z-index: 10;
+    /* z-index: 10; */
     min-width: 70vw;
-    height: 65vh;
+    height: 70vh;
 
     background-color: black;
 
@@ -305,14 +308,14 @@ nav a {
 }
 
 .video_screen {
-    height: 100%;
+    max-height: 70vh;
     aspect-ratio: 4/3;
 
     background-color: white;
 }
 #loading{
-    width: 100px;
-    height: 100px;
+    min-width: 70vw;
+    height: 70vh;
 
     z-index: 10;
     position: absolute;
@@ -325,7 +328,7 @@ nav a {
   
     position: absolute; left: 0px; top: calc(15vh + 20px);
 
-    height: calc(70vh - 50px);
+    max-height: 70vh;
     min-width: 70vw;
 
     display: flex;
@@ -334,7 +337,7 @@ nav a {
 }
 
 .output_canvas{
-    height: calc(70vh - 50px);
+    max-height: 70vh;
     aspect-ratio: 4/3;
 }
 #historico-container{
@@ -350,9 +353,9 @@ nav a {
 
 #historico-palavras{
     width: 100%;
-    height: calc(85vh - 120px);
+    max-height: 85vh;
 
-    overflow:scroll;
+    overflow-y:auto;
     overflow-x:hidden;
 
     display: flex;
@@ -360,15 +363,19 @@ nav a {
     align-items: center;
 }
 
+.historico-phrase:last-child{
+    margin-bottom: 80px;
+}
+
 .historico-phrase{
     width: calc(100% - 40px);
-    min-height: calc(min-content + 20px);
     padding: 10px; 
 
     border-radius: 10px;
     background-color: #dfd3b7;
     text-align: start;
-
+    margin: 0px;
+    margin-bottom:10px;
 }
 
 #botoes-container {
@@ -381,11 +388,11 @@ nav a {
     position: fixed;
     bottom: 0px;
 
-    background-color: red;
+    background-color: white;
 }
 
 .botao-baixo {
-    height: 15vh;
+    height: calc(15vh - 20px);
     aspect-ratio: 1/1;
 
     background-color: #333;
@@ -401,12 +408,12 @@ nav a {
 }
 
 .botao-icone{
-    height: calc(15vh - 20px);
+    height: calc(15vh - 40px);
 }
 
 #container-traducoes {
     width: 100%;
-    height: 15vh;
+    height: calc(15vh - 20px);
 
     border: 1px solid #000;
     border-radius: 10px;
@@ -475,3 +482,8 @@ nav a {
         z-index: 50;
     }
 }
+
+
+
+/*! FOI PERCEBIDO QUE A IMAGEM EM SI NÃO RESPEITA A ÁREA BRANCA DO CONTAINER DE VÍDEO, ULTRAPASSANDO ELE CASO O TAMANHO DELE DIMINUIR  */
+/*! A altura é pega total */

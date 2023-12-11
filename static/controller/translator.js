@@ -301,7 +301,3 @@ async function predictWebcam() {
     canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height)
   }
 }
-
-
-
-//PARECE SER ALGO NA MÃO
