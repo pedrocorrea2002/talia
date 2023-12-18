@@ -6,7 +6,7 @@ from flask_login import login_user, current_user, login_required, LoginManager
 
 from static.utils.classes.userAuth_classes import UserAuthentication, UserRegistration
 from static.utils.classes.user import user
-from static.utils.functions.sinais_translator import sinais_translator
+# from static.utils.functions.sinais_translator import sinais_translator
 
 
 abacate = Flask(__name__)
