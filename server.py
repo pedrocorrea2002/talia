@@ -198,7 +198,7 @@ def translator():
         return jsonify(result=" ".join(resposta))
 
 if __name__ == "__main__":
-    abacate.run(host="0.0.0.0",port=5000,debug=True, ssl_context='adhoc')
+    abacate.run(host="0.0.0.0",port=443,debug=True, ssl_context='adhoc')
 
 
 #^ IF THE skeleton IS SHOWING WILL BE A SESSION
