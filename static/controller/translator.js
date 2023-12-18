@@ -55,8 +55,6 @@ function hideShow_landmarks(){
   }
 }
 
-
-
 // Before we can use HandLandmarker class we must wait for it to finish
 // loading. Machine Learning models can be large and take a moment to
 // get everything needed to run.
@@ -87,10 +85,8 @@ const createLandmarkers = async () => {
 createLandmarkers()
 
 const video = document.getElementById("video-container")
-const videoBox = document.getElementById("canvas_container")
-const canvasElement = document.getElementById(
-  "output_canvas"
-)
+const canvasElement = document.getElementById("output_canvas")
+
 const canvasCtx = canvasElement.getContext("2d")
 const drawingUtils = new DrawingUtils(canvasCtx)
 
@@ -148,7 +144,7 @@ function enableCam(event) {
     navigator.mediaDevices.getUserMedia(constraints).then((stream) => {
       video.srcObject = stream
       video.addEventListener("loadeddata", predictWebcam)
-      gravando = true
+      gravando = false
     })
   }
 }
@@ -162,10 +158,10 @@ async function predictWebcam() {
   //   document.getElementById("loading").remove()
   // }
 
-  canvasElement.style.width = video.videoWidth
-  canvasElement.style.height = video.videoHeight
-  canvasElement.width = video.videoWidth
-  canvasElement.height = video.videoHeight
+  canvasElement.style.width = video.offsetWidth
+  canvasElement.style.height = video.offsetHeight
+  canvasElement.width = video.offsetHeight * 4/3
+  canvasElement.height = video.offsetHeight
   let frame = []
 
   // Now let's start detecting the stream.
