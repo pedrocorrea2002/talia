@@ -192,8 +192,8 @@ def translator():
         sinais = json.loads(request.data)
         #sinais = np.array(sinais[0])
 
-        for palavra in sinais:
-           resposta.append(sinais_translator(palavra))
+        # for palavra in sinais:
+        #    resposta.append(sinais_translator(palavra))
 
         return jsonify(result=" ".join(resposta))
 
