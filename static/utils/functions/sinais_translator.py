@@ -10,11 +10,11 @@ actions = np.array(lista_nomes)
 def sinais_translator(input):
     #* normalizando dados
     pred_array = np.array(input).reshape(1,1,6750)
-    # pred_mean = np.mean(pred_array)
-    # pred_std = np.std(pred_array)
-    # epsilon = 1e-10
+    pred_mean = np.mean(pred_array)
+    pred_std = np.std(pred_array)
+    epsilon = 1e-10
 
-    # pred_array = (pred_array - pred_mean) / (pred_std + epsilon)
+    pred_array = (pred_array - pred_mean) / (pred_std + epsilon)
 
     #* traduzindo
     resp = model.predict(pred_array)[0]

@@ -1,11 +1,10 @@
 import numpy as np
 
 class Pose:
-  def __init__(self, x, y, z, visibility):
+  def __init__(self, x, y, z):
     self.x = x
     self.y = y
     self.z = z
-    self.visibility = visibility
 
 class Hand:
   def __init__(self, x, y, z):
@@ -15,9 +14,9 @@ class Hand:
 
 def npy_to_keypoints(npyArray) :
     keypointsArray = np.ndarray.tolist(npyArray)
-    pose_keypointsArray = keypointsArray[:132]
-    leftHand_keypointsArray = keypointsArray[:195][-63:]
-    rightHand_keypointsArray = keypointsArray[:258][-63:]
+    pose_keypointsArray = keypointsArray[:99]
+    leftHand_keypointsArray = keypointsArray[:162][-63:]
+    rightHand_keypointsArray = keypointsArray[:225][-63:]
 
     #^ PREENCHENDO ARRAY COM OS PONTOS DO CORPO
     pose_kp_formatted = []
@@ -25,7 +24,6 @@ def npy_to_keypoints(npyArray) :
     x = 0
     y = 0
     z = 0
-    visibility = 0
 
     for points in pose_keypointsArray :
         if(coordinate_id == 0):
@@ -34,17 +32,14 @@ def npy_to_keypoints(npyArray) :
             y = points
         if(coordinate_id == 2):
             z = points
-        if(coordinate_id == 3):
-            visibility = points
 
             pose_kp_formatted.append(
-                Pose(x, y, z, visibility)
+                Pose(x, y, z)
             )
 
             x = 0
             y = 0
             z = 0
-            visibility = 0
             coordinate_id = 0
         else:
             coordinate_id = coordinate_id + 1

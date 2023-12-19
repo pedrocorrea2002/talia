@@ -255,7 +255,7 @@ async function predictWebcam() {
 
       // console.log(`frame: ${frame} |frame`)
 
-      if (sinais.length == 1 && sinais[0].length == 30) {
+      if (sinais.length == 5 && sinais[4].length == 30) {
         gravando = false
         processando = true
         traducoes.innerText = "Processando tradução ..."

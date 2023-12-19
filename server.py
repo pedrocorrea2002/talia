@@ -196,12 +196,12 @@ def translator():
         sinais = np.array(sinais)
 
         for palavra in sinais:
-            # resposta.append(sinais_translator(palavra))
-            exibidor_de_amostra(palavra)
+            resposta.append(sinais_translator(palavra))
+            # exibidor_de_amostra(palavra)
 
-        # return jsonify(result=" ".join(resposta))
+        return jsonify(result=" ".join(resposta))
 
-        return jsonify(result="aaa")
+        # return jsonify(result="aaa")
 
 if __name__ == "__main__":
     abacate.run(host="0.0.0.0",port=443,debug=True, ssl_context='adhoc')
