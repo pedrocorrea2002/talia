@@ -8,6 +8,7 @@ from flask_login import login_user, current_user, login_required, LoginManager
 from static.utils.classes.userAuth_classes import UserAuthentication, UserRegistration
 from static.utils.classes.user import user
 from static.utils.functions.sinais_translator import sinais_translator
+from static.utils.functions.exibidor_de_amostra import exibidor_de_amostra
 
 
 abacate = Flask(__name__)
@@ -183,6 +184,7 @@ def home():
 #         mimetype = "multipart/x-mixed-replace; boundary=frame")
 
 @abacate.route("/translate_screen")
+@login_required
 def translate_screen():
     return render_template('translator.html',username=current_user.username)
 
@@ -191,12 +193,15 @@ def translator():
     if request.method == "POST" and request.data :
         resposta = []
         sinais = json.loads(request.data)
-        sinais = np.array(sinais[0])
+        sinais = np.array(sinais)
 
         for palavra in sinais:
-           resposta.append(sinais_translator(palavra))
+            # resposta.append(sinais_translator(palavra))
+            exibidor_de_amostra(palavra)
 
-        return jsonify(result=" ".join(resposta))
+        # return jsonify(result=" ".join(resposta))
+
+        return jsonify(result="aaa")
 
 if __name__ == "__main__":
     abacate.run(host="0.0.0.0",port=443,debug=True, ssl_context='adhoc')

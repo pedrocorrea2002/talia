@@ -384,7 +384,7 @@ nav a {
     align-items: center;
 }
 
-#lingueta{
+#historico-lingueta{
     display: none;
 }
 
@@ -460,7 +460,7 @@ nav a {
 }
 
 #metadados-sinais{
-    height: 20px;
+    height: 10px;
     min-width: calc(50% - 10px);
     text-align: start;
     margin-left:10px;
@@ -468,7 +468,7 @@ nav a {
 }
 
 #metadados-frames{
-    height: 20px;
+    height: 10px;
     min-width: calc(50% - 10px);
     text-align: end;
     margin-right:10px;
@@ -482,13 +482,13 @@ nav a {
     display: flex;
     height: 100%;
     min-width: 100%;
-    padding: 5px;
 
     vertical-align: middle;
-    text-align: center;
+    text-align: left;
+    margin-left: 10px;
 }
 
-@media (max-width: 1090px) {
+@media (max-width: 750) {
     body{
         overflow-y: scroll;
     }
@@ -530,6 +530,18 @@ nav a {
 
     .video_box{
         height: 70vh;
+    }
+
+    #metadados-sinais{
+        font-size: 11px;
+    }
+
+    #metadados-frames{
+        font-size: 11px;
+    }
+
+    #traducoes{
+        font-size: 12px;
     }
 
     #historico-container{

@@ -144,7 +144,7 @@ function enableCam(event) {
     navigator.mediaDevices.getUserMedia(constraints).then((stream) => {
       video.srcObject = stream
       video.addEventListener("loadeddata", predictWebcam)
-      gravando = false
+      gravando = true
     })
   }
 }
@@ -182,8 +182,35 @@ async function predictWebcam() {
     resultsHands = handLandmarker.detectForVideo(video, startTimeMs)
     resultsPose = poseLandmarker.detectForVideo(video, startTimeMs)
   }
+  
   canvasCtx.save()
   canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height)
+
+  // Percorrendo pontos do corpo
+  if (resultsPose.landmarks.length != 0) {
+    // console.log("resultsPose: ",resultsPose.landmarks)
+    for (const pose_landmark of resultsPose.landmarks) {
+      // Desenhando o esqueleto ou não, conforme escolha do usuário
+      if (show_landmarks) {
+        drawingUtils.drawLandmarks(pose_landmark, {
+          radius: (data) => DrawingUtils.lerp(data.from.z, -0.15, 0.1, 5, 1)
+        })
+        drawingUtils.drawConnectors(pose_landmark, PoseLandmarker.POSE_CONNECTIONS)
+      }
+
+      pose_landmark.forEach((point) => {
+        frame.push(point.x)
+        frame.push(point.y)
+        frame.push(point.z)
+      })
+    }
+  } else {
+    for (let index = 0; index < 33; index++) {
+      frame.push(0)
+      frame.push(0)
+      frame.push(0)
+    }
+  }
 
   // DESENHANDO PONTOS DA MÃO E PASSANDO PARA O ARRAY
   for (const hand_landmark of resultsHands.landmarks) {
@@ -213,34 +240,7 @@ async function predictWebcam() {
     }
   }
 
-
   canvasCtx.save()
-
-  // Percorrendo pontos do corpo
-  if (resultsPose.landmarks.length != 0) {
-    // console.log("resultsPose: ",resultsPose.landmarks)
-    for (const pose_landmark of resultsPose.landmarks) {
-      // Desenhando o esqueleto ou não, conforme escolha do usuário
-      if (show_landmarks) {
-        drawingUtils.drawLandmarks(pose_landmark, {
-          radius: (data) => DrawingUtils.lerp(data.from.z, -0.15, 0.1, 5, 1)
-        })
-        drawingUtils.drawConnectors(pose_landmark, PoseLandmarker.POSE_CONNECTIONS)
-      }
-
-      pose_landmark.forEach((point) => {
-        frame.push(point.x)
-        frame.push(point.y)
-        frame.push(point.z)
-      })
-    }
-  } else {
-    for (let index = 0; index < 33; index++) {
-      frame.push(0)
-      frame.push(0)
-      frame.push(0)
-    }
-  }
 
   if (gravando) {
     console.log(`${frame.length} -- ${amostra.length} -- ${sinais.length}`)
