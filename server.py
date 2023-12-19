@@ -1,12 +1,13 @@
 import os
 import hashlib
 import json
+import numpy as np
 from flask import Flask, render_template, request, redirect, url_for, Response,jsonify
 from flask_login import login_user, current_user, login_required, LoginManager
 
 from static.utils.classes.userAuth_classes import UserAuthentication, UserRegistration
 from static.utils.classes.user import user
-# from static.utils.functions.sinais_translator import sinais_translator
+from static.utils.functions.sinais_translator import sinais_translator
 
 
 abacate = Flask(__name__)
@@ -91,14 +92,14 @@ def home():
         # * SE A PASTA EXISTE O LOGIN É FEITO, SE ELA NÃO EXISTE O LOGIN É NEGADO
         if os.path.exists(os.path.join(user_folder)):
             login_user(user(login_form.username.data, final_hash))
-            return redirect(url_for("big_buttons"))
+            return redirect(url_for("translate_screen"))
         else:
             return render_template(
                 "home.html",
                 form_logon=logon_form,
                 form_login=login_form,
                 exist_user_logon=False,
-                exist_user_login=False,
+                exist_user_login=False
             )
 
     return render_template(
@@ -183,17 +184,17 @@ def home():
 
 @abacate.route("/translate_screen")
 def translate_screen():
-    return render_template('translator.html')
+    return render_template('translator.html',username=current_user.username)
 
 @abacate.route("/translator", methods=["POST"])
 def translator():
     if request.method == "POST" and request.data :
         resposta = []
         sinais = json.loads(request.data)
-        #sinais = np.array(sinais[0])
+        sinais = np.array(sinais[0])
 
-        # for palavra in sinais:
-        #    resposta.append(sinais_translator(palavra))
+        for palavra in sinais:
+           resposta.append(sinais_translator(palavra))
 
         return jsonify(result=" ".join(resposta))
 
