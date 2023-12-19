@@ -158,10 +158,16 @@ async function predictWebcam() {
   //   document.getElementById("loading").remove()
   // }
 
-  canvasElement.style.width = video.offsetWidth
-  canvasElement.style.height = video.offsetHeight
-  canvasElement.width = video.offsetHeight * 4/3
-  canvasElement.height = video.offsetHeight
+  //* Ajustando tamanho do vídeo caso o celular esteja em pé ou deitado
+  if(video.videoHeight < video.videoWidth){ //* deitado
+    canvasElement.width = video.offsetHeight * 4/3
+    canvasElement.height = video.offsetHeight
+    document.getElementsByClassName("video_screen")[0].style.aspectRatio = "4/3"
+  }else{ //* em pé
+    canvasElement.width = video.offsetHeight * 3/4
+    canvasElement.height = video.offsetHeight
+    document.getElementsByClassName("video_screen")[0].style.aspectRatio = "3/4"
+  }
   let frame = []
 
   // Now let's start detecting the stream.
