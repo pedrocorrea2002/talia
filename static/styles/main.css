@@ -488,6 +488,18 @@ nav a {
     margin-left: 10px;
 }
 
+@media landscape{
+    .video_screen{
+        aspect-ratio: 4/3;
+    }
+}
+
+@media portrait{
+    .video_screen{
+        aspect-ratio: 4/3;
+    }
+}
+
 @media (max-width: 750px) {
     body{
         overflow-y: scroll;
