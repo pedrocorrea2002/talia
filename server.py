@@ -32,8 +32,8 @@ def main():
 
 @abacate.route("/home", methods=["GET", "POST"])
 def home():
-    if str(current_user)[:-37] != "<flask_login.mixins.AnonymousUs":
-        return redirect(url_for("translate_screen"))
+    # if str(current_user)[:-37] != "<flask_login.mixins.AnonymousUs":
+    #     return redirect(url_for("translate_screen"))
 
     logon_form = UserRegistration()
     login_form = UserAuthentication()
@@ -69,7 +69,7 @@ def home():
         else:
             os.mkdir(user_folder)
             login_user(user(logon_form.username.data, final_hash))
-            return redirect(url_for("big_buttons"))
+            return redirect(url_for("translate_screen"))
 
     elif (
         request.method == "POST"
