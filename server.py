@@ -33,7 +33,7 @@ def main():
 @abacate.route("/home", methods=["GET", "POST"])
 def home():
     if str(current_user)[:-37] != "<flask_login.mixins.AnonymousUs":
-        return redirect(url_for("big_buttons"))
+        return redirect(url_for("translate_screen"))
 
     logon_form = UserRegistration()
     login_form = UserAuthentication()
