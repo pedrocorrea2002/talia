@@ -184,7 +184,7 @@ def home():
 #         mimetype = "multipart/x-mixed-replace; boundary=frame")
 
 @abacate.route("/translate_screen")
-@login_required
+#@login_required
 def translate_screen():
     return render_template('translator.html',username=current_user.username)
 
