@@ -486,6 +486,7 @@ nav a {
     vertical-align: middle;
     text-align: left;
     margin-left: 10px;
+    margin-right: 10px;
 }
 
 @media landscape{
