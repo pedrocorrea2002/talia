@@ -183,10 +183,10 @@ def home():
 #     return Response(recorder(hash,sample_name,folder_range),
 #         mimetype = "multipart/x-mixed-replace; boundary=frame")
 
-@abacate.route("/translate_screen")
+@abacate.route("/translate_screen", methods=["GET"])
 #@login_required
 def translate_screen():
-    return render_template('translator.html',username=current_user.username)
+    return render_template('translate_screen.html',username=current_user.username)
 
 @abacate.route("/translator", methods=["POST"])
 def translator():
