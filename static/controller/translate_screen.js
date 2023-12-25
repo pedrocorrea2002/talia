@@ -20,7 +20,6 @@ let handLandmarker = undefined
 let webcamRunning = false
 let sinais = []
 let amostra = []
-let gravando = true
 let processando = false
 let show_landmarks = true
 let lastVideoTime = -1
@@ -73,7 +72,6 @@ const createLandmarkers = async () => {
     min_pose_presence_confidence: 0.7
   })
 }
-
 createLandmarkers()
 
 //TODO: criar notificação para caso a câmera não esteja disponível
@@ -109,33 +107,45 @@ function enableCam(event) {
   // if (sinais.length == 5 && sinais[-1] && sinais[-1].length == 30) {
   // }
   
+  console.log("bbbbbbbb: ",webcamRunning)
   if (webcamRunning === true) {
+    console.log("aaaaa: ",sinais)
+
     webcamRunning = false
     botao_play.src = "https://cdn4.iconfinder.com/data/icons/round-buttons/128/red_play.png"
-    metadados_sinais.innerText = ""
-    metadados_frames.innerText = ""
-    traducoes.innerText = ""
-    sinais = []
+
+    if(sinais.length == 0 && amostra.length < 30){
+      metadados_sinais.innerText = ""
+      metadados_frames.innerText = ""
+      traducoes.innerText = ""
+      sinais = []
+    }else{
+      let ultimo_sinal = sinais[sinais.length - 1]
+
+      if(ultimo_sinal < 30){
+        sinais.pop()
+      }
+      getTranslation()
+    }
 
     // enableWebcamButton.innerText = "ENABLE PREDICTIONS"
   } else {
     webcamRunning = true
     botao_play.src = "https://cdn2.iconfinder.com/data/icons/flat-style-svg-icons-part-1/512/stop_button_play-256.png"
     // enableWebcamButton.innerText = "DISABLE PREDICTIONS"
-  }
-
-  // getUsermedia parameters.
-  const constraints = {
-    video: true
-  }
-
-  // Activate the webcam stream.
-  if (!processando) {
-    navigator.mediaDevices.getUserMedia(constraints).then((stream) => {
-      video_screen.srcObject = stream
-      video_screen.addEventListener("loadeddata", getMovements)
-      gravando = true
-    })
+    // getUsermedia parameters.
+    const constraints = {
+      video: true
+    }
+  
+    // Activate the webcam stream.
+    if (!processando) {
+      navigator.mediaDevices.getUserMedia(constraints).then((stream) => {
+        video_screen.srcObject = stream
+        video_screen.addEventListener("loadeddata", getMovements)
+        webcamRunning = true
+      })
+    }
   }
 }
 
@@ -164,8 +174,8 @@ async function getMovements() {
   let startTimeMs = performance.now()
   if (lastVideoTime !== video_screen.currentTime) {
     lastVideoTime = video_screen.currentTime
-    resultsHands = handLandmarker.detectForVideo(video, startTimeMs)
-    resultsPose = poseLandmarker.detectForVideo(video, startTimeMs)
+    resultsHands = handLandmarker.detectForVideo(video_screen, startTimeMs)
+    resultsPose = poseLandmarker.detectForVideo(video_screen, startTimeMs)
   }
   
   canvasCtx.save()
@@ -227,7 +237,7 @@ async function getMovements() {
 
   canvasCtx.save()
 
-  if (gravando) {
+  if (webcamRunning) {
     console.log(`${frame.length} -- ${amostra.length} -- ${sinais.length}`)
 
     amostra.push(frame)
@@ -241,18 +251,9 @@ async function getMovements() {
       // console.log(`frame: ${frame} |frame`)
 
       if (sinais.length == 5 && sinais[4].length == 30) {
-        gravando = false
-        processando = true
-        traducoes.innerText = "Processando tradução ..."
-        webcamRunning = false
-        botao_play.src = "https://cdn4.iconfinder.com/data/icons/round-buttons/128/red_play.png"
-        botao_play.style.filter = "grayscale(100%)"
-        botao_play.style.cursor = "default"
-        canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height)
-        canvasCtx.save()
-
-        //* ENVIANDO REQUISIÇÃO PARA O SERVIDOR PYTHON
+        //* enviando dados para serem traduzidos
         getTranslation()
+        frame = []
       }
     }
   }
@@ -269,6 +270,19 @@ async function getMovements() {
 
 //* enviando lista de coordenadas do pontos e pegando a tradução
 function getTranslation(){
+  //
+
+  webcamRunning = false
+  processando = true
+  traducoes.innerText = "Processando tradução ..."
+  webcamRunning = false
+  botao_play.src = "https://cdn4.iconfinder.com/data/icons/round-buttons/128/red_play.png"
+  botao_play.style.filter = "grayscale(100%)"
+  botao_play.style.cursor = "default"
+  canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height)
+  canvasCtx.save()
+  
+  //* ENVIANDO REQUISIÇÃO PARA O SERVIDOR PYTHON
   fetch('/translator', {
     method: "POST",
     headers: {
@@ -290,6 +304,5 @@ function getTranslation(){
       botao_play.style.cursor = "pointer"
       processando = false
       sinais = []
-      frame = []
   })
 }
