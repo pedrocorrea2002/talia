@@ -6,10 +6,11 @@ import time
 
 sequence_length = 30 #Números de frames por amostra
 
-def modal_feeder(sinal) :
+def modal_feeder(sinal_nome):
+    sinais = 
+
     # Loop de frames
     for frame_num, frame in enumerate(sinal):
-
         pose_kps, leftHand_kps, rightHand_kps = npy_to_keypoints(frame)
 
         # DECLARANDO AQUI PARA LIMPARA A IMAGEM A CADA FRAME
