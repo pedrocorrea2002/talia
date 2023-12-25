@@ -1,17 +1,3 @@
-// Copyright 2023 The MediaPipe Authors.
-
-// Licensed under the Apache License, Version 2.0 (the "License")
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-
-//      http://www.apache.org/licenses/LICENSE-2.0
-
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
 import {
   PoseLandmarker,
   HandLandmarker,
@@ -37,9 +23,10 @@ let processando = false
 let show_landmarks = true
 const gif_loading = "<img id='loading' src='/static/styles/loading-circles-acs-rectangles.webp'/>"
 
-//* ADICIONANDO ESCUTA NO BOTÃO DO ESQUELETO
+//* Adicionando escuta no botão do esqueleto
 botao_esqueleto.addEventListener("click", hideShow_landmarks)
 
+//* Função para mostrar e ocultar o esqueleto
 function hideShow_landmarks(){
   show_landmarks = !show_landmarks
 
@@ -58,6 +45,9 @@ function hideShow_landmarks(){
 // Before we can use HandLandmarker class we must wait for it to finish
 // loading. Machine Learning models can be large and take a moment to
 // get everything needed to run.
+
+//* Antes de usar as classes HandLandmarker e PoseLandmarker, nós devemos esperar elas terminarem de carregar
+//* Os modelos de Machine Learning usados aqui são pesados e podem levar um tempo para estarem prontos para uso
 const createLandmarkers = async () => {
   const vision = await FilesetResolver.forVisionTasks(
     "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.0/wasm"
@@ -84,16 +74,18 @@ const createLandmarkers = async () => {
 
 createLandmarkers()
 
-const video = document.getElementById("video-container")
-const canvasElement = document.getElementById("output_canvas")
+const video = document.getElementById("video-container") //? camada do vídeo da pessoa
+const canvasElement = document.getElementById("output_canvas") //? camada do esqueleto
 
 const canvasCtx = canvasElement.getContext("2d")
 const drawingUtils = new DrawingUtils(canvasCtx)
 
-// Checando se a câmera é está disponível para acesso
+//TODO: criar notificação para caso a câmera não esteja disponível
+//* Checando se a câmera é está disponível para acesso
 const hasGetUserMedia = () => !!navigator.mediaDevices?.getUserMedia
 
-//Se a câmera estiver disponível para acesso é adicionado uma escuta de click nela, se não é informado um mensagem
+//* Se a câmera estiver disponível para acesso é adicionado uma escuta de click no botão responsável por ativá-la
+//* se não, é informado é mostrado uma notificação
 if (hasGetUserMedia()) {
   enableWebcamButton = document.getElementById("botao-play")
   enableWebcamButton.addEventListener("click", enableCam)
@@ -103,6 +95,8 @@ if (hasGetUserMedia()) {
 }
 
 // // Enable the live webcam view and start detection.
+
+//* Liga e desliga a câmera
 function enableCam(event) {
   //* ADICIONA O LOADING
   // videoBox.innerHTML += gif_loading
@@ -116,16 +110,16 @@ function enableCam(event) {
     return
   }
 
-  if (sinais.length == 5 && sinais[-1] && sinais[-1].length == 30) {
-    sinais = []
-  }
-
+  // if (sinais.length == 5 && sinais[-1] && sinais[-1].length == 30) {
+  // }
+  
   if (webcamRunning === true) {
     webcamRunning = false
     document.getElementById("botao-play-icon").src = "https://cdn4.iconfinder.com/data/icons/round-buttons/128/red_play.png"
     metadados_sinais.innerText = ""
     metadados_frames.innerText = ""
     traducoes.innerText = ""
+    sinais = []
 
     // enableWebcamButton.innerText = "ENABLE PREDICTIONS"
   } else {
@@ -143,7 +137,7 @@ function enableCam(event) {
   if (!processando) {
     navigator.mediaDevices.getUserMedia(constraints).then((stream) => {
       video.srcObject = stream
-      video.addEventListener("loadeddata", predictWebcam)
+      video.addEventListener("loadeddata", getMovements)
       gravando = true
     })
   }
@@ -153,7 +147,12 @@ let lastVideoTime = -1
 let resultsHands = undefined
 let resultsPose = undefined
 
-async function predictWebcam() {
+//* Desenha o esqueleto
+//* Coleta a coordenadas dos pontos do corpo da pessoa
+//* Faz a tradução de até 5 sinais pro vez
+//* Mostra tradução na tela
+//* Salva a tradução no histórico
+async function getMovements() {
   // if(document.getElementById("loading")){
   //   document.getElementById("loading").remove()
   // }
@@ -289,7 +288,7 @@ async function predictWebcam() {
             processando = false
             sinais = []
             frame = []
-          })
+        })
       }
     }
   }
@@ -297,7 +296,7 @@ async function predictWebcam() {
   // Call this function again to keep predicting when the browser is ready.
   if (webcamRunning === true) {
     setTimeout(() => {
-      window.requestAnimationFrame(predictWebcam)
+      window.requestAnimationFrame(getMovements)
     }, 1000 / 15)
   } else {
     canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height)
