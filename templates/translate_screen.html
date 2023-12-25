@@ -1,16 +1,16 @@
 {% extends 'main logado2.html'%}
 {% block conteudo %}
 <div id="gravador-tela">
-  <div class="video_box" id="video-box">
+  <div class="video_box centralize" id="video-box">
     <video id="video-container" class="video_screen" autoplay playsinline>
     </video>
-    <div id="canvas_container">
+    <div id="canvas_container" class="centralize">
       <canvas id="output_canvas" class="output_canvas"></canvas>
     </div>
   </div>
   <div id="historico-container">
     <p id="historico-lingueta">▼</p>
-    <h2 id="historico-title">Histórico de Palavras</h2>
+    <h2 id="historico-title" class="centralize">Histórico de Palavras</h2>
     <div id="historico-palavras"></div>
   </div>
   <script src="{{url_for('static', filename='controller/translate_screen.js')}}" type="module" defer></script>
@@ -29,7 +29,7 @@
     </div>
     <p id="traducoes"></p>
   </div>
-  <button id="botao-esqueleto" class="botao-baixo">
+  <button id="botao-esqueleto" class="botao-baixo centralize">
     <img class="botao-icone"
       src="https://cdn0.iconfinder.com/data/icons/human-figures-outline/60/Standard-Person-people-stickman-being-256.png">
   </button>

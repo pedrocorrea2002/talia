@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TALIA</title>
     <link rel="stylesheet" href="{{url_for('static', filename='styles/main.css')}}"/>
+    <script src="{{url_for('static', filename='controller/main_logado.js')}}" defer></script>
 </head>
 <body>
     <header>
@@ -13,23 +14,33 @@
             <a href="#" class="logo">
                 TALIA
             </a>
-            <div id="menu">
+            <div id="menu" onclick="showHideMenu()">
                 <div class="menu-line"></div>
                 <div class="menu-line"></div>
                 <div class="menu-line"></div>
             </div>
+            <p id="menu_help"></p>
         </div>
         <div id="bottom">
             <p id="welcome">Bem vindo, {{username}}</p>
-            <!-- <div id="bottom_bar">
-                <a>Dicionário</a>
-                <a>Minhas amostras</a>
-            </div> -->
+            <div id="bottom_bar">
+                <a onclick="window.location.replace(`{{url_for('translate_screen')}}`)">
+                    Tradutor
+                </a>
+                <a onclick="window.location.replace(`{{url_for('dicionario')}}`)">
+                    Sinais que sei
+                </a>
+            </div>
         </div>
         <div id="menu-tab">
-            <p id="menu-tab-x">X</p>
+            <p id="menu-tab-x" class="centralize" onclick="showHideMenu()">X</p>
             <br/>
-            <p id="menu-tab-option">Sinais que sei</p>
+            <p id="menu-tab-option" onclick="window.location.replace(`{{url_for('translate_screen')}}`)">
+                Tradutor
+            </p>
+            <p id="menu-tab-option" onclick="window.location.replace(`{{url_for('dicionario')}}`)">
+                Sinais que sei
+            </p>
         </div>
     </header>
     {% block conteudo %}{% endblock %}

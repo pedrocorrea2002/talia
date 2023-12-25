@@ -271,8 +271,6 @@ async function getMovements() {
 
 //* enviando lista de coordenadas do pontos e pegando a tradução
 function getTranslation(){
-  //
-
   webcamRunning = false
   processando = true
   traducoes.innerText = "Processando tradução ..."
@@ -296,9 +294,9 @@ function getTranslation(){
 
       if(content.result == ""){
         traducoes.innerText = "Sem tradução!"
-        lista_historico.innerHTML += `<p class='historico-phrase'>${content.result}</p>`
       }else{
         traducoes.innerText = content.result
+        lista_historico.innerHTML += `<p class='historico-phrase'>${content.result}</p>`
       }
 
       botao_play.style.filter = "grayscale(0%)"

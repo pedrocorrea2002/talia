@@ -2,13 +2,15 @@ import os
 import hashlib
 import json
 import numpy as np
-from flask import Flask, render_template, request, redirect, url_for, Response,jsonify
+from flask import Flask, render_template, request, redirect, url_for,jsonify, Response
 from flask_login import login_user, current_user, login_required, LoginManager
 
 from static.utils.classes.userAuth_classes import UserAuthentication, UserRegistration
 from static.utils.classes.user import user
 from static.utils.functions.sinais_translator import sinais_translator
 #from static.utils.functions.exibidor_de_amostra import exibidor_de_amostra
+from static.utils.functions.modal_feeder import modal_feeder
+from lista_gestos_funcionais import lista_nomes
 
 
 abacate = Flask(__name__)
@@ -17,6 +19,8 @@ abacate.config["SECRET_KEY"] = "secret"
 login_manager = LoginManager()
 login_manager.login_view = "home"
 login_manager.init_app(abacate)
+sinais_exemplo = os.path.join("gestos.csv")
+sinais_exemplo = np.load(sinais_exemplo)
 
 
 @login_manager.user_loader
@@ -197,11 +201,19 @@ def translator():
 
         for palavra in sinais:
             resposta.append(sinais_translator(palavra))
-            # exibidor_de_amostra(palavra)
 
         return jsonify(result=" ".join(resposta))
+    
+@abacate.route("/dicionario", methods=["GET"])
+@login_required
+def dicionario():
+    return render_template("dicionario.html",username=current_user.username, lista_nomes=lista_nomes)
 
-        # return jsonify(result="aaa")
+@abacate.route("/dicionario_modal_<sinal_nome>")
+@login_required
+def dicionario_modal(sinal_nome):
+    return Response(modal_feeder(sinal_nome),
+         mimetype = "multipart/x-mixed-replace; boundary=frame")
 
 if __name__ == "__main__":
     abacate.run(host="0.0.0.0",port=443,debug=True, ssl_context='adhoc')

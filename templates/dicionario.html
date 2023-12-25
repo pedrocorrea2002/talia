@@ -1,0 +1,13 @@
+{% extends 'main logado2.html'%}
+{% block conteudo %}
+    <div id="container-sinais">
+        {% for sinal_libras in lista_nomes %}
+            <div class="sinal">
+                <div class="sinal-button centralize">
+                    ▶
+                </div>
+                <div class="sinal-name centralize">{{sinal_libras}}</div>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}
