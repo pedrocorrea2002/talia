@@ -8,20 +8,26 @@ import {
 const traducoes = document.getElementById("traducoes")
 const metadados_sinais = document.getElementById("metadados-sinais")
 const metadados_frames = document.getElementById("metadados-frames")
+const botao_play = document.getElementById("botao-play-icon")
 const botao_esqueleto = document.getElementById("botao-esqueleto")
 const lista_historico = document.getElementById("historico-palavras")
+const video_screen = document.getElementById("video-container") //? camada do vídeo da pessoa
+const canvasElement = document.getElementById("output_canvas") //? camada do esqueleto
+const gif_loading = "<img id='loading' src='/static/styles/loading-circles-acs-rectangles.webp'/>"
 
 let poseLandmarker = undefined
 let handLandmarker = undefined
-let runningMode = "IMAGE"
-let enableWebcamButton = null
 let webcamRunning = false
 let sinais = []
 let amostra = []
 let gravando = true
 let processando = false
 let show_landmarks = true
-const gif_loading = "<img id='loading' src='/static/styles/loading-circles-acs-rectangles.webp'/>"
+let lastVideoTime = -1
+let resultsHands = undefined
+let resultsPose = undefined
+const canvasCtx = canvasElement.getContext("2d")
+const drawingUtils = new DrawingUtils(canvasCtx)
 
 //* Adicionando escuta no botão do esqueleto
 botao_esqueleto.addEventListener("click", hideShow_landmarks)
@@ -42,10 +48,6 @@ function hideShow_landmarks(){
   }
 }
 
-// Before we can use HandLandmarker class we must wait for it to finish
-// loading. Machine Learning models can be large and take a moment to
-// get everything needed to run.
-
 //* Antes de usar as classes HandLandmarker e PoseLandmarker, nós devemos esperar elas terminarem de carregar
 //* Os modelos de Machine Learning usados aqui são pesados e podem levar um tempo para estarem prontos para uso
 const createLandmarkers = async () => {
@@ -57,7 +59,7 @@ const createLandmarkers = async () => {
       modelAssetPath: `https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task`,
       delegate: "GPU"
     },
-    runningMode: runningMode,
+    runningMode: "VIDEO",
     numHands: 2,
     min_hand_detection_confidence: 0.3
   })
@@ -66,19 +68,13 @@ const createLandmarkers = async () => {
       modelAssetPath: `https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_lite/float16/1/pose_landmarker_lite.task`,
       delegate: "GPU"
     },
-    runningMode: runningMode,
+    runningMode: "VIDEO",
     numPoses: 1,
     min_pose_presence_confidence: 0.7
   })
 }
 
 createLandmarkers()
-
-const video = document.getElementById("video-container") //? camada do vídeo da pessoa
-const canvasElement = document.getElementById("output_canvas") //? camada do esqueleto
-
-const canvasCtx = canvasElement.getContext("2d")
-const drawingUtils = new DrawingUtils(canvasCtx)
 
 //TODO: criar notificação para caso a câmera não esteja disponível
 //* Checando se a câmera é está disponível para acesso
@@ -87,8 +83,7 @@ const hasGetUserMedia = () => !!navigator.mediaDevices?.getUserMedia
 //* Se a câmera estiver disponível para acesso é adicionado uma escuta de click no botão responsável por ativá-la
 //* se não, é informado é mostrado uma notificação
 if (hasGetUserMedia()) {
-  enableWebcamButton = document.getElementById("botao-play")
-  enableWebcamButton.addEventListener("click", enableCam)
+  botao_play.addEventListener("click", enableCam)
 } else {
   // console.warn("getUserMedia() is not supported by your browser")
   //! COLOCAR UMA POP-UP DE ERRO
@@ -106,6 +101,7 @@ function enableCam(event) {
     return
   }
 
+  //^ se a tradução estiver processando o botão de play não deve fazer nada
   if (processando == true) {
     return
   }
@@ -115,7 +111,7 @@ function enableCam(event) {
   
   if (webcamRunning === true) {
     webcamRunning = false
-    document.getElementById("botao-play-icon").src = "https://cdn4.iconfinder.com/data/icons/round-buttons/128/red_play.png"
+    botao_play.src = "https://cdn4.iconfinder.com/data/icons/round-buttons/128/red_play.png"
     metadados_sinais.innerText = ""
     metadados_frames.innerText = ""
     traducoes.innerText = ""
@@ -124,7 +120,7 @@ function enableCam(event) {
     // enableWebcamButton.innerText = "ENABLE PREDICTIONS"
   } else {
     webcamRunning = true
-    document.getElementById("botao-play-icon").src = "https://cdn2.iconfinder.com/data/icons/flat-style-svg-icons-part-1/512/stop_button_play-256.png"
+    botao_play.src = "https://cdn2.iconfinder.com/data/icons/flat-style-svg-icons-part-1/512/stop_button_play-256.png"
     // enableWebcamButton.innerText = "DISABLE PREDICTIONS"
   }
 
@@ -136,16 +132,12 @@ function enableCam(event) {
   // Activate the webcam stream.
   if (!processando) {
     navigator.mediaDevices.getUserMedia(constraints).then((stream) => {
-      video.srcObject = stream
-      video.addEventListener("loadeddata", getMovements)
+      video_screen.srcObject = stream
+      video_screen.addEventListener("loadeddata", getMovements)
       gravando = true
     })
   }
 }
-
-let lastVideoTime = -1
-let resultsHands = undefined
-let resultsPose = undefined
 
 //* Desenha o esqueleto
 //* Coleta a coordenadas dos pontos do corpo da pessoa
@@ -158,26 +150,20 @@ async function getMovements() {
   // }
 
   //* Ajustando tamanho do vídeo caso o celular esteja em pé ou deitado
-  if(video.videoHeight < video.videoWidth){ //* deitado
-    canvasElement.width = video.offsetHeight * 4/3
-    canvasElement.height = video.offsetHeight
-    document.getElementsByClassName("video_screen")[0].style.aspectRatio = "4/3"
+  if(video_screen.videoHeight < video_screen.videoWidth){ //* deitado
+    canvasElement.width = video_screen.offsetHeight * 4/3
+    canvasElement.height = video_screen.offsetHeight
+    video_screen.style.aspectRatio = "4/3"
   }else{ //* em pé
-    canvasElement.width = video.offsetHeight * 3/4
-    canvasElement.height = video.offsetHeight
-    document.getElementsByClassName("video_screen")[0].style.aspectRatio = "3/4"
+    canvasElement.width = video_screen.offsetHeight * 3/4
+    canvasElement.height = video_screen.offsetHeight
+    video_screen.style.aspectRatio = "3/4"
   }
   let frame = []
-
-  // Now let's start detecting the stream.
-  if (runningMode === "IMAGE") {
-    runningMode = "VIDEO"
-    await handLandmarker.setOptions({ runningMode: "VIDEO" })
-    await poseLandmarker.setOptions({ runningMode: "VIDEO" })
-  }
+  
   let startTimeMs = performance.now()
-  if (lastVideoTime !== video.currentTime) {
-    lastVideoTime = video.currentTime
+  if (lastVideoTime !== video_screen.currentTime) {
+    lastVideoTime = video_screen.currentTime
     resultsHands = handLandmarker.detectForVideo(video, startTimeMs)
     resultsPose = poseLandmarker.detectForVideo(video, startTimeMs)
   }
@@ -259,36 +245,14 @@ async function getMovements() {
         processando = true
         traducoes.innerText = "Processando tradução ..."
         webcamRunning = false
-        document.getElementById("botao-play-icon").src = "https://cdn4.iconfinder.com/data/icons/round-buttons/128/red_play.png"
-        document.getElementById("botao-play-icon").style.filter = "grayscale(100%)"
-        document.getElementById("botao-play-icon").style.cursor = "default"
+        botao_play.src = "https://cdn4.iconfinder.com/data/icons/round-buttons/128/red_play.png"
+        botao_play.style.filter = "grayscale(100%)"
+        botao_play.style.cursor = "default"
         canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height)
         canvasCtx.save()
 
         //* ENVIANDO REQUISIÇÃO PARA O SERVIDOR PYTHON
-        fetch('/translator', {
-          method: "POST",
-          headers: {
-            'Content-type': 'application/json'
-          },
-          body: JSON.stringify(sinais)
-        }).then(response => response.json())
-          .then(content => {
-            console.log("data:", content)
-
-            if(content.result == ""){
-              traducoes.innerText = "Sem tradução!"
-            }else{
-              traducoes.innerText = content.result
-            }
-
-            lista_historico.innerHTML += `<p class='historico-phrase'>${content.result}</p>`
-            document.getElementById("botao-play-icon").style.filter = "grayscale(0%)"
-            document.getElementById("botao-play-icon").style.cursor = "pointer"
-            processando = false
-            sinais = []
-            frame = []
-        })
+        getTranslation()
       }
     }
   }
@@ -301,4 +265,31 @@ async function getMovements() {
   } else {
     canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height)
   }
+}
+
+//* enviando lista de coordenadas do pontos e pegando a tradução
+function getTranslation(){
+  fetch('/translator', {
+    method: "POST",
+    headers: {
+      'Content-type': 'application/json'
+    },
+    body: JSON.stringify(sinais)
+  }).then(response => response.json())
+    .then(content => {
+      console.log("data:", content)
+
+      if(content.result == ""){
+        traducoes.innerText = "Sem tradução!"
+      }else{
+        traducoes.innerText = content.result
+      }
+
+      lista_historico.innerHTML += `<p class='historico-phrase'>${content.result}</p>`
+      botao_play.style.filter = "grayscale(0%)"
+      botao_play.style.cursor = "pointer"
+      processando = false
+      sinais = []
+      frame = []
+  })
 }
