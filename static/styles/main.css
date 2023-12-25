@@ -41,6 +41,66 @@ header #upper {
     align-items: center;
 }
 
+header #menu{
+    height: 25px;
+    margin-right: 20px;
+    cursor: pointer;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+header #menu .menu-line{
+    width: 30px;
+    height: 4px;
+
+    background-color: white;
+    border-radius: 2px;
+}
+
+header #menu-tab{
+    position: fixed;
+    top: 0px;
+    right: 0px;
+    z-index: 100;
+
+    width: 60vw;
+    height: 100vh;
+
+    background-color: white;
+    border: 2px solid #333;
+
+    display: none;
+    flex-direction: column;
+    justify-content: flex-start;
+}
+
+header #menu-tab-x{
+    width: 60px;
+    height: 60px;
+
+    background-color: #222;
+    color: white;
+    font-weight: bolder;
+    font-size: 40px;
+    
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    border-radius: 20px;
+    margin-left: 20px;
+}
+
+header #menu-tab-option{
+    color: #333;
+    font-size: 20px;
+    margin-left: 20px;
+    text-align: left;
+    text-decoration: underline;
+}
+
 header #bottom {
     width: 100vw;
     height: min-content;
@@ -52,6 +112,7 @@ header #bottom {
 }
 
 .logo {
+    max-height: 25px;
     font-size: 24px;
     font-weight: bold;
     margin-left: 20px;

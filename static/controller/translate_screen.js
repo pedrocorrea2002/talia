@@ -118,6 +118,7 @@ function enableCam(event) {
       metadados_frames.innerText = ""
       traducoes.innerText = ""
       sinais = []
+      amostra = []
     }else{
       let ultimo_sinal = sinais[sinais.length - 1]
 
@@ -258,11 +259,11 @@ async function getMovements() {
     }
   }
 
-  // Call this function again to keep predicting when the browser is ready.
+  //* mantendo o ciclo de coleta de frames rodando
   if (webcamRunning === true) {
     setTimeout(() => {
       window.requestAnimationFrame(getMovements)
-    }, 1000 / 15)
+    }, 30)
   } else {
     canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height)
   }
@@ -295,11 +296,11 @@ function getTranslation(){
 
       if(content.result == ""){
         traducoes.innerText = "Sem tradução!"
+        lista_historico.innerHTML += `<p class='historico-phrase'>${content.result}</p>`
       }else{
         traducoes.innerText = content.result
       }
 
-      lista_historico.innerHTML += `<p class='historico-phrase'>${content.result}</p>`
       botao_play.style.filter = "grayscale(0%)"
       botao_play.style.cursor = "pointer"
       metadados_frames.innerHTML = ""
