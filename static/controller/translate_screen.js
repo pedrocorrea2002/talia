@@ -107,7 +107,6 @@ function enableCam(event) {
   // if (sinais.length == 5 && sinais[-1] && sinais[-1].length == 30) {
   // }
   
-  console.log("bbbbbbbb: ",webcamRunning)
   if (webcamRunning === true) {
     console.log("aaaaa: ",sinais)
 
@@ -131,6 +130,7 @@ function enableCam(event) {
     // enableWebcamButton.innerText = "ENABLE PREDICTIONS"
   } else {
     webcamRunning = true
+    traducoes.innerText = ""
     botao_play.src = "https://cdn2.iconfinder.com/data/icons/flat-style-svg-icons-part-1/512/stop_button_play-256.png"
     // enableWebcamButton.innerText = "DISABLE PREDICTIONS"
     // getUsermedia parameters.
@@ -302,6 +302,8 @@ function getTranslation(){
       lista_historico.innerHTML += `<p class='historico-phrase'>${content.result}</p>`
       botao_play.style.filter = "grayscale(0%)"
       botao_play.style.cursor = "pointer"
+      metadados_frames.innerHTML = ""
+      metadados_sinais.innerHTML = ""
       processando = false
       sinais = []
   })
