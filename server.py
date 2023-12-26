@@ -13,14 +13,14 @@ from static.utils.functions.sinais_translator import sinais_translator
 from static.utils.functions.modal_feeder import modal_feeder
 from lista_gestos_funcionais import lista_nomes
 
-#* carregando sinais de exemplo
-sinais_exemplo = []
-gestos_csv = os.path.join("gestos2.csv")
-with open(gestos_csv, newline='') as csvfile:
-    spamreader = csv.reader(csvfile, delimiter=';', quotechar='|')
+# #* carregando sinais de exemplo
+# sinais_exemplo = []
+# gestos_csv = os.path.join("gestos2.csv")
+# with open(gestos_csv, newline='') as csvfile:
+#     spamreader = csv.reader(csvfile, delimiter=';', quotechar='|')
 
-    for row in spamreader:
-        sinais_exemplo.append(row)
+#     for row in spamreader:
+#         sinais_exemplo.append(row)
 
 #* configurando login
 abacate = Flask(__name__)
@@ -211,26 +211,26 @@ def translator():
 
         return jsonify(result=" ".join(resposta))
     
-@abacate.route("/dicionario", methods=["GET"])
-@login_required
-def dicionario():
-    return render_template("dicionario.html",username=current_user.username, lista_nomes=lista_nomes)
+# @abacate.route("/dicionario", methods=["GET"])
+# @login_required
+# def dicionario():
+#     return render_template("dicionario.html",username=current_user.username, lista_nomes=lista_nomes)
 
-@abacate.route("/dicionario_modal_<sinal_nome>")
-@login_required
-def dicionario_modal(sinal_nome):
-    image_list = modal_feeder(sinal_nome,sinais_exemplo)
+# @abacate.route("/dicionario_modal_<sinal_nome>")
+# @login_required
+# def dicionario_modal(sinal_nome):
+#     image_list = modal_feeder(sinal_nome,sinais_exemplo)
 
-    #* O PROBLEMA É SE DUAS PESSOAS FOREM OLHAR NESSE CANAL AO MESMO TEMPO
-    #* TAMBÉM NÃO DÁ PRA FAZER UM LOOP DE RETURN
+#     #* O PROBLEMA É SE DUAS PESSOAS FOREM OLHAR NESSE CANAL AO MESMO TEMPO
+#     #* TAMBÉM NÃO DÁ PRA FAZER UM LOOP DE RETURN
 
-    #TODO: converter as imagens para gif
+#     #TODO: converter as imagens para gif
 
-    return Response(image_list,
-         mimetype = "multipart/x-mixed-replace; boundary=frame")
+#     return Response(image_list,
+#          mimetype = "multipart/x-mixed-replace; boundary=frame")
 
-if __name__ == "__main__":
-    abacate.run(host="0.0.0.0",port=443,debug=True, ssl_context='adhoc')
+# if __name__ == "__main__":
+#     abacate.run(host="0.0.0.0",port=443,debug=True, ssl_context='adhoc')
 
 
 #^ IF THE skeleton IS SHOWING WILL BE A SESSION
