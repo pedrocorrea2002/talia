@@ -2,6 +2,7 @@ import os
 import hashlib
 import json
 import numpy as np
+import csv
 from flask import Flask, render_template, request, redirect, url_for,jsonify, Response
 from flask_login import login_user, current_user, login_required, LoginManager
 
@@ -12,16 +13,22 @@ from static.utils.functions.sinais_translator import sinais_translator
 from static.utils.functions.modal_feeder import modal_feeder
 from lista_gestos_funcionais import lista_nomes
 
+#* carregando sinais de exemplo
+sinais_exemplo = []
+gestos_csv = os.path.join("gestos2.csv")
+with open(gestos_csv, newline='') as csvfile:
+    spamreader = csv.reader(csvfile, delimiter=';', quotechar='|')
 
+    for row in spamreader:
+        sinais_exemplo.append(row)
+
+#* configurando login
 abacate = Flask(__name__)
 abacate.config["SECRET_KEY"] = "secret"
 
 login_manager = LoginManager()
 login_manager.login_view = "home"
 login_manager.init_app(abacate)
-sinais_exemplo = os.path.join("gestos.csv")
-sinais_exemplo = np.load(sinais_exemplo)
-
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -212,7 +219,14 @@ def dicionario():
 @abacate.route("/dicionario_modal_<sinal_nome>")
 @login_required
 def dicionario_modal(sinal_nome):
-    return Response(modal_feeder(sinal_nome),
+    image_list = modal_feeder(sinal_nome,sinais_exemplo)
+
+    #* O PROBLEMA É SE DUAS PESSOAS FOREM OLHAR NESSE CANAL AO MESMO TEMPO
+    #* TAMBÉM NÃO DÁ PRA FAZER UM LOOP DE RETURN
+
+    #TODO: converter as imagens para gif
+
+    return Response(image_list,
          mimetype = "multipart/x-mixed-replace; boundary=frame")
 
 if __name__ == "__main__":

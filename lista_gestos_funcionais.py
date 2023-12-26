@@ -9,7 +9,7 @@ lista_nomes = [
 # "boa tarde",
 # "bom dia",  
 # "C",        
-"ele",      
+"ele",    
 "eu",
 # "F",
 # "G",

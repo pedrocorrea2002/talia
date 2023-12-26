@@ -6,8 +6,18 @@ import time
 
 sequence_length = 30 #Números de frames por amostra
 
-def modal_feeder(sinal_nome):# Loop de frames
-    for frame_num, frame in enumerate(sinal):
+def modal_feeder(sinal_nome,sinais_exemplo):# Loop de frames
+    frames = []
+    image_list = []
+
+    #* pegando apenas frames 
+    for exemplo in sinais_exemplo:
+        if exemplo.split(";")[0] == sinal_nome :
+            frames.append(exemplo[-225:])
+        if len(frames) == 30:
+            break
+
+    for frame_num, frame in enumerate(frames):
         pose_kps, leftHand_kps, rightHand_kps = npy_to_keypoints(frame)
 
         # DECLARANDO AQUI PARA LIMPARA A IMAGEM A CADA FRAME
@@ -40,12 +50,13 @@ def modal_feeder(sinal_nome):# Loop de frames
         cv2.putText(image_black, legenda, (3, 460),
                         cv2.QT_FONT_NORMAL, 0.4, (255, 255, 255), 1, cv2.LINE_AA)
 
-        cv2.imshow("Captura", image_black)
-        time.sleep(0.06)
+        # cv2.imshow("Captura", image_black)
+        # time.sleep(0.06)
+        image_list.append(image_black)
 
         # estava dando um bug ao tentar adicionar uma pausa em branco aqui, não sei o pq
         if frame_num == 29 :
-            time.sleep(2)
+            return image_list
 
         if cv2.waitKey(10) & 0xFF == ord('q'):
                 break
