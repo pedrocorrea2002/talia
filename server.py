@@ -2,7 +2,6 @@ import os
 import hashlib
 import json
 import numpy as np
-import csv
 from flask import Flask, render_template, request, redirect, url_for,jsonify, Response
 from flask_login import login_user, current_user, login_required, LoginManager
 
