@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TALIA</title>
     <link rel="stylesheet" href="{{url_for('static', filename='styles/main.css')}}"/>
-    <script src="{{url_for('static', filename='controller/main_logado.js')}}" defer></script>
+    <!-- <script src="{{url_for('static', filename='controller/main_logado.js')}}" defer></script> -->
 </head>
 <body>
     <header>
@@ -32,16 +32,16 @@
                 </a> -->
             </div>
         </div>
-        <div id="menu-tab">
+        <!-- <div id="menu-tab">
             <p id="menu-tab-x" class="centralize" onclick="showHideMenu()">X</p>
             <br/>
             <p id="menu-tab-option" onclick="window.location.replace(`{{url_for('translate_screen')}}`)">
                 Tradutor
-            <!-- </p>
+            </p>
             <p id="menu-tab-option" onclick="window.location.replace(`{{url_for('dicionario')}}`)">
                 Sinais que sei
-            </p> -->
-        </div>
+            </p>
+        </div> -->
     </header>
     {% block conteudo %}{% endblock %}
 </body>
