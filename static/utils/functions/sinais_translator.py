@@ -1,6 +1,6 @@
 import numpy as np
 from keras import models
-from lista_gestos import lista_nomes
+from lista_gestos_funcionais import lista_nomes
 
 #* variáveis globais
 model = models.load_model("gestos5.h5")
