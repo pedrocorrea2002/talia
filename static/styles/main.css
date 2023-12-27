@@ -574,6 +574,18 @@ nav a {
     border: 2px solid black;
 }
 
+#sinal_modal{
+    display: none;
+    position: fixed;
+    top: 15vh;
+
+    background-color: black;
+    height: 80vh;
+    aspect-ratio: 4/3;
+
+    border: 5px #ff9600 solid;
+}
+
 @media landscape{
     .video_screen{
         aspect-ratio: 3/4;

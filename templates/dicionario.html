@@ -1,13 +1,19 @@
 {% extends 'main logado2.html'%}
 {% block conteudo %}
     <div id="container-sinais">
+        <script src="{{url_for('static', filename='controller/dicionario.js')}}" defer></script>
+
         {% for sinal_libras in lista_nomes %}
-            <div class="sinal">
+            <div class="sinal" id="{{sinal_libras}}" onclick="showExample(this)">
                 <div class="sinal-button centralize">
                     ▶
                 </div>
                 <div class="sinal-name centralize">{{sinal_libras}}</div>
             </div>
         {% endfor %}
+
+        <canvas id="sinal_modal">
+
+        </canvas>
     </div>
 {% endblock %}
