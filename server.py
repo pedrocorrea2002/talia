@@ -42,8 +42,8 @@ def main():
 
 @abacate.route("/home", methods=["GET", "POST"])
 def home():
-    if hasattr(current_user,"username"):
-        return redirect(url_for("translate_screen"))
+    # if hasattr(current_user,"username"):
+    #     return redirect(url_for("translate_screen"))
 
     logon_form = UserRegistration()
     login_form = UserAuthentication()
@@ -194,7 +194,7 @@ def home():
 #         mimetype = "multipart/x-mixed-replace; boundary=frame")
 
 @abacate.route("/translate_screen", methods=["GET"])
-@login_required
+# @login_required
 def translate_screen():
     return render_template('translate_screen.html',username=current_user.username)
 
