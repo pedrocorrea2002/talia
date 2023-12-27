@@ -228,8 +228,8 @@ def home():
 #     return Response(image_list,
 #          mimetype = "multipart/x-mixed-replace; boundary=frame")
 
-# if __name__ == "__main__":
-#     abacate.run(host="0.0.0.0",port=443,debug=True, ssl_context='adhoc')
+if __name__ == "__main__":
+    abacate.run(host="0.0.0.0",port=443,debug=True, ssl_context='adhoc')
 
 
 #^ IF THE skeleton IS SHOWING WILL BE A SESSION
