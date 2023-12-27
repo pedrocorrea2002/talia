@@ -193,22 +193,22 @@ def home():
 #     return Response(recorder(hash,sample_name,folder_range),
 #         mimetype = "multipart/x-mixed-replace; boundary=frame")
 
-# @abacate.route("/translate_screen", methods=["GET"])
-# # @login_required
-# def translate_screen():
-#     return render_template('translate_screen.html',username=current_user.username)
+@abacate.route("/translate_screen", methods=["GET"])
+# @login_required
+def translate_screen():
+    return render_template('translate_screen.html',username=current_user.username)
 
-# @abacate.route("/translator", methods=["POST"])
-# def translator():
-#     if request.method == "POST" and request.data :
-#         resposta = []
-#         sinais = json.loads(request.data)
-#         sinais = np.array(sinais)
+@abacate.route("/translator", methods=["POST"])
+def translator():
+    if request.method == "POST" and request.data :
+        resposta = []
+        sinais = json.loads(request.data)
+        sinais = np.array(sinais)
 
-#         for palavra in sinais:
-#             resposta.append(sinais_translator(palavra))
+        for palavra in sinais:
+            resposta.append(sinais_translator(palavra))
 
-#         return jsonify(result=" ".join(resposta))
+        return jsonify(result=" ".join(resposta))
     
 # @abacate.route("/dicionario", methods=["GET"])
 # @login_required
