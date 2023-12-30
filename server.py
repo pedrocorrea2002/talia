@@ -216,4 +216,4 @@ def dicionario():
     return render_template("dicionario.html",username=current_user.username, lista_nomes=lista_nomes)
 
 if __name__ == "__main__":
-    abacate.run(host="192.168.18.27",port=443,debug=True, ssl_context='adhoc')
+    abacate.run(host="0.0.0.0",port=443,debug=True, ssl_context='adhoc')
