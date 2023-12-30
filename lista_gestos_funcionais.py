@@ -1,40 +1,15 @@
 import os
 
 lista_nomes = [
-# "A",
 "aprender", 
-# "B",        
-# "bem vindo",
-"boa noite",
-# "boa tarde",
-# "bom dia",  
-# "C",        
+"boa noite",    
 "ele",    
 "eu",
-# "F",
-# "G",
-# "H",
-# "I",
 "inteligência artificial",
-# "J",
-# "L",
 "Libras",
-# "meu",
-"meu nome",
-"mundo",
-# "N",
 "nome",
-"nós",
-# "O",
 "oi",
-"olá",
-# "olá todos",
-# "P",
-# "pertencer",
-"projeto",
-# "Q",
-# "R",
-"TALIA"
+"projeto"
 ]
 
 # PERTENCE + NÓS = NOSSO

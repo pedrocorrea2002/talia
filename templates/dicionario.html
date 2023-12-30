@@ -11,9 +11,15 @@
                 <div class="sinal-name centralize">{{sinal_libras}}</div>
             </div>
         {% endfor %}
-
-        <canvas id="sinal_modal">
-
-        </canvas>
+        
+        <div id="container_example">
+            <div id="container_example_bar_x">
+                <div id="container_example_x" onclick="closeModal()">
+                    X
+                </div>
+            </div>
+            <img id="sinal_modal"/>
+            <div id="example_progress_bar"><div id="bar"></div></div>
+        </div>
     </div>
 {% endblock %}

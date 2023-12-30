@@ -1,11 +1,10 @@
-sinais_deXpara = {
+const sinais_deXpara = {
     "aprender":"aprender",
     "boa noite":"boa noite",
     "ele":"ele",
     "eu":"eu",
     "inteligência artificial":"inteligencia artificial",
     "Libras":"Libras",
-    "meu nome":"meu nome",
     "mundo":"mundo",
     "nome":"nome",
     "nós":"nos",
@@ -15,16 +14,34 @@ sinais_deXpara = {
     "TALIA":"TALIA"
 }
 
+var imageIndex = 0
+var close = false
+
 function showExample(video_button){
-    sinal_name = sinais_deXpara[video_button.id]
-    modal = document.getElementById("sinal_modal")
-    modal.style.display = "flex"
+    const sinal_nome = sinais_deXpara[video_button.id]
+    const modal = document.getElementById("sinal_modal")
+    const containerModal = document.getElementById("container_example")
+    const bar = document.getElementById("bar")
+    containerModal.style.display = "flex"
 
-    for(let index = 0;index < 30;index++){
-        setTimeout(() => {
-            //modal.style.backgroundImage = `url('/static/exemplos/${sinal_name}/${index}.png')`
+    modal.src = `/static/exemplos/${sinal_nome}/${imageIndex}.png`
+    
+    if(imageIndex < 30 && !close){
+        imageIndex++;
+        bar.style.width = `calc(100% * ${imageIndex/30})` 
 
-            //* draw in canvas
-        },50)
+        requestAnimationFrame(() => {
+            setTimeout(() => {
+                showExample(video_button)
+            },100)
+        })
+    }else{
+        imageIndex = 0
+        containerModal.style.display = "none"
+        close = false
     }
+}
+
+function closeModal(){
+    close = true
 }

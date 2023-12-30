@@ -3,7 +3,7 @@ from keras import models
 from lista_gestos_funcionais import lista_nomes
 
 #* variáveis globais
-model = models.load_model("gestos5.h5")
+model = models.load_model("gestos.h5")
 threshold = 0.9
 actions = np.array(lista_nomes)
 

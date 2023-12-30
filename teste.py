@@ -19,7 +19,7 @@ with open(gestos_csv, newline='') as csvfile:
 def modal_feeder(frames):# Loop de frames
     #* percorrendo linhas já divididas por ;
     for frame in frames:
-        path_name = os.path.join("exemplos",frame[0])
+        path_name = os.path.join("static/exemplos",frame[0])
 
         if os.path.exists(path_name) == False:
             os.mkdir(path_name)

@@ -215,13 +215,5 @@ def translator():
 def dicionario():
     return render_template("dicionario.html",username=current_user.username, lista_nomes=lista_nomes)
 
-#     #* O PROBLEMA É SE DUAS PESSOAS FOREM OLHAR NESSE CANAL AO MESMO TEMPO
-#     #* TAMBÉM NÃO DÁ PRA FAZER UM LOOP DE RETURN
-
-#     #TODO: converter as imagens para gif
-
-#     return Response(image_list,
-#          mimetype = "multipart/x-mixed-replace; boundary=frame")
-
 if __name__ == "__main__":
-    abacate.run(host="0.0.0.0",port=443,debug=True, ssl_context='adhoc')
+    abacate.run(host="192.168.18.27",port=443,debug=True, ssl_context='adhoc')

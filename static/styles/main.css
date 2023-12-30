@@ -574,27 +574,98 @@ nav a {
     border: 2px solid black;
 }
 
-#sinal_modal{
+#container_example{
     display: none;
+    flex-direction: column;
     position: fixed;
     top: 15vh;
-
-    background-color: black;
-    height: 80vh;
-    aspect-ratio: 4/3;
-
-    border: 5px #ff9600 solid;
 }
 
-@media landscape{
+#sinal_modal{
+    background-color: black;
+    border: 5px #ff9600 solid;
+
+    position: relative;
+    top: -30px;
+}
+
+#example_progress_bar{
+    height: 20px;
+
+    position: relative;
+    top: -30px;
+
+    display: flex;
+    align-items: end;
+}
+
+#bar{
+    height: 20px;
+    background-color: yellow;
+}
+
+#container_example_bar_x{
+    width: 100%;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: end;
+
+    position: relative;
+    top:30px;
+
+    z-index: 30;
+}
+
+#container_example_x{
+    font-size: 30px;
+    font-weight: bold;
+    color: white;
+
+    margin-right: 30px;
+    cursor: pointer;
+}
+
+@media (orientation:landscape){
     .video_screen{
         aspect-ratio: 3/4;
     }
+
+    #container_example{
+        height: 80vh;
+        aspect-ratio: 3/4;
+    }
+    
+    #example_progress_bar{
+        width: calc(80vh * 1.33); 
+    }
+
+    #bar{
+        position: relative;
+        top: -20px;
+    }
 }
 
-@media portrait{
+@media (orientation:portrait){
     .video_screen{
         aspect-ratio: 4/3;
+    }
+
+    #container_example{
+        width: 100vw;
+        aspect-ratio: 3/4;
+    }
+
+    #example_progress_bar{
+        width: 100vw;
+        height: 15px;
+    }
+    
+    #bar{
+        height: 15px;
+
+        position: relative;
+        top: -15px;
     }
 }
 
