@@ -27,7 +27,7 @@ function showExample(video_button){
     if(imageIndex < 30 && !close){
         modal.src = `./static/exemplos/${sinal_nome}/${imageIndex}.png`
         imageIndex++;
-        bar.style.width = `calc(100% * ${imageIndex/30})` 
+        bar.style.width = `calc(100% * ${imageIndex/30})`
 
         requestAnimationFrame(() => {
             setTimeout(() => {
