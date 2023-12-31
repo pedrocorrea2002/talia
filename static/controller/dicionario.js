@@ -24,7 +24,7 @@ function showExample(video_button){
     const bar = document.getElementById("bar")
     containerModal.style.display = "flex"
 
-    modal.src = `/static/exemplos/${sinal_nome}/${imageIndex}.png`
+    modal.src = `./static/exemplos/${sinal_nome}/${imageIndex}.png`
     
     if(imageIndex < 30 && !close){
         imageIndex++;
