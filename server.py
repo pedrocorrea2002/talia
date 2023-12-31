@@ -56,12 +56,14 @@ def home():
         # * CONVERTENDO O CONJUNTO username_password PARA MD5
         md5_conversor = hashlib.md5()
 
-        user_hash = f"{logon_form.username.data}_{logon_form.password.data}".encode(
+        user_hash = f"{logon_form.username.data.strip()}_{logon_form.password.data.strip()}".encode(
             "utf-8"
         )
+
+        str().strip()
         md5_conversor.update(user_hash)
         user_hash = md5_conversor.hexdigest()
-        md5_conversor.update(logon_form.username.data.encode("utf-8"))
+        md5_conversor.update(logon_form.username.data.strip().encode("utf-8"))
         username_hash = md5_conversor.hexdigest()
         final_hash = f"{username_hash}_{user_hash}"
 
@@ -78,7 +80,7 @@ def home():
             )
         else:
             os.mkdir(user_folder)
-            login_user(user(logon_form.username.data, final_hash))
+            login_user(user(logon_form.username.data.strip(), final_hash))
             return redirect(url_for("translate_screen"))
 
     elif (
@@ -89,12 +91,12 @@ def home():
         # * CONVERTENDO O CONJUNTO username_password PARA MD5
         md5_conversor = hashlib.md5()
 
-        user_hash = f"{login_form.username.data}_{login_form.password.data}".encode(
+        user_hash = f"{login_form.username.data.strip()}_{login_form.password.data.strip()}".encode(
             "utf-8"
         )
         md5_conversor.update(user_hash)
         user_hash = md5_conversor.hexdigest()
-        md5_conversor.update(login_form.username.data.encode("utf-8"))
+        md5_conversor.update(login_form.username.data.strip().encode("utf-8"))
         username_hash = md5_conversor.hexdigest()
         final_hash = f"{username_hash}_{user_hash}"
 
@@ -102,7 +104,7 @@ def home():
 
         # * SE A PASTA EXISTE O LOGIN É FEITO, SE ELA NÃO EXISTE O LOGIN É NEGADO
         if os.path.exists(os.path.join(user_folder)):
-            login_user(user(login_form.username.data, final_hash))
+            login_user(user(login_form.username.data.strip(), final_hash))
             return redirect(url_for("translate_screen"))
         else:
             return render_template(
