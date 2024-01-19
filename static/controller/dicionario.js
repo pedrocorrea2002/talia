@@ -14,7 +14,6 @@ const sinais_deXpara = {
     "TALIA":"TALIA"
 }
 
-var imageIndex = 0
 var close = false
 
 function showExample(video_button){
@@ -22,25 +21,36 @@ function showExample(video_button){
     const modal = document.getElementById("sinal_modal")
     const containerModal = document.getElementById("container_example")
     const bar = document.getElementById("bar")
+    let listaImagens = []
     containerModal.style.display = "flex"
 
-    if(imageIndex < 30 && !close){
-        modal.src = `./static/exemplos/${sinal_nome}/${imageIndex}.png`
-        imageIndex++;
-        bar.style.width = `calc(100% * ${imageIndex/30})`
+    for(let imageIndex = 0; imageIndex < 30 && !close; imageIndex++){
+        let image = new Image()
+        image.src = `./static/exemplos/${sinal_nome}/${imageIndex}.png`
 
-        requestAnimationFrame(() => {
-            setTimeout(() => {
-                showExample(video_button)
-            },100)
-        })
-    }else{
-        imageIndex = 0
-        containerModal.style.display = "none"
-        close = false
+        listaImagens.push(image.src)
+
+        // modal.src = `./static/exemplos/${sinal_nome}/${imageIndex}.png`
     }
+
+    atualizar_frame(modal,bar,listaImagens,0,containerModal)
 }
 
 function closeModal(){
     close = true
+}
+
+function atualizar_frame(modal,bar,listaImagens,image,containerModal){
+    setTimeout(() => {
+        modal.src = listaImagens[image]
+
+        bar.style.width = `calc(100% * ${image/30})`
+
+        if(image != 29 && !close){
+            atualizar_frame(modal,bar,listaImagens,image + 1,containerModal)
+        }else{
+            containerModal.style.display = "none"
+            close = false
+        }
+    },100)
 }

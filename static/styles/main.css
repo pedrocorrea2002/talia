@@ -579,6 +579,8 @@ nav a {
     flex-direction: column;
     position: fixed;
     top: 15vh;
+
+    background-color: black;
 }
 
 #sinal_modal{
