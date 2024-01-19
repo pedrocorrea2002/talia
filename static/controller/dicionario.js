@@ -29,8 +29,6 @@ function showExample(video_button){
         image.src = `./static/exemplos/${sinal_nome}/${imageIndex}.png`
 
         listaImagens.push(image.src)
-
-        // modal.src = `./static/exemplos/${sinal_nome}/${imageIndex}.png`
     }
 
     atualizar_frame(modal,bar,listaImagens,0,containerModal)
