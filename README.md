@@ -7,10 +7,16 @@
    ### ⚠️ Requirements
    - python 3.10
 
-   ### ℹ️ How to install the project?
-   ```
-       git install 'https://github.com/pedrocorrea2002/talia.git
-   ```
+   <details>
+     <summary><h3>
+       ℹ️ How to install the project?
+     </h3></summary>
+
+```git install 'https://github.com/pedrocorrea2002/talia.git```
+
+
+   </details>
+
 
    ### 📚 Libraries
    - tensorflow
