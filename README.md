@@ -12,7 +12,12 @@
        ℹ️ How to install the project?
      </h3></summary>
 
-```git install 'https://github.com/pedrocorrea2002/talia.git```
+First, if you have Git installed in your computer, execute the command below in your terminal:
+```
+git install 'https://github.com/pedrocorrea2002/talia.git
+```
+
+If not, just download the repository and extract the compressed file in the folder of your choice
 
 
    </details>
