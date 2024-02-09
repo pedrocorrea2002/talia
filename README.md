@@ -30,7 +30,7 @@ Now, execute the command below to make the next commands that you execute consid
 <details>
   <summary><h4>
     WINDOWS
-  </h3></summary>
+  </h4></summary>
 
 ```
 .venv/Scripts/actívate
@@ -39,7 +39,7 @@ Now, execute the command below to make the next commands that you execute consid
 <details>
   <summary><h4>
     LINUX
-  </h3></summary>
+  </h4></summary>
 
 ```
 source .venv/bin/activate
