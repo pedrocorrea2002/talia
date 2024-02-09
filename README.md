@@ -27,9 +27,8 @@ python -m venv .venv
 ```
 
 Now, execute the command below to make the next commands that you execute consider the files inside of the .venv folder:
-
 <details>
-  <summary><h3>
+  <summary><h4>
     WINDOWS
   </h3></summary>
 
@@ -38,7 +37,7 @@ Now, execute the command below to make the next commands that you execute consid
 ```
 </details>
 <details>
-  <summary><h3>
+  <summary><h4>
     LINUX
   </h3></summary>
 
