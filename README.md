@@ -37,6 +37,7 @@
   </details>
   <details>
   <summary>LINUX</summary>
+    
   ```
   source .venv/bin/activate
   ```
@@ -57,7 +58,7 @@
   <summary><b>ℹ️ How to install the libraries?</b></summary>
     
    ```
-      pip install library-name
+   pip install library-name
    ```
 </details>
 <details>
@@ -65,7 +66,7 @@
 
   In the root folder of the project execute the command below:
    ```
-      python server.py
+   python server.py
    ```
 
   Wait for the terminal show the URLs where the project is running and access in your browser the URL https://<your_ip>/home
@@ -110,6 +111,7 @@
    </details>
    <details>
    <summary>LINUX</summary>
+     
    ```
    source .venv/bin/activate
    ```
@@ -129,16 +131,17 @@
    <details>
    <summary><b>ℹ️ Como instalar as bibliotecas?</b></summary>
      
-    ```
-       pip install library-name
-    ```
+   ```
+   pip install library-name
+   ```
  </details>
  <details>
   <summary><b>ℹ️ Como executar o projeto?</b></summary>
 
   Na pasta raiz do projeto execute o comando abaixo:
+  
    ```
-      python server.py
+   python server.py
    ```
 
   Espere o terminal exibir as URLs onde o projeto está rodando e em seu navegador acesse a URL https://<seu_ip>/home
