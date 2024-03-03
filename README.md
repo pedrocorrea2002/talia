@@ -13,35 +13,36 @@
   <details>
   <summary><b>ℹ️ How to install the project?</b></summary>
 
-  First, if you have Git installed in your computer, execute the command below in your terminal in the folder where you want to download the project:
-  ```
-  git install 'https://github.com/pedrocorrea2002/talia.git
-  ```
+  >First, if you have Git installed in your computer, execute the command below in your terminal in the folder where you want to download the project:
+  >```
+  >git install 'https://github.com/pedrocorrea2002/talia.git
+  >```
+  >
+  >If not, just download the repository pressing the "Code" green button at the start of this page and extract the compressed file in the folder of your choice.
+  <br>
   
-  If not, just download the repository pressing the "Code" green button at the start of this page and extract the compressed file in the folder of your choice.
+  >Both if downloaded the repository manually or using Git, enter inside of the folder that contains the repository files in your terminal.
+  >
+  >Execute the command below to generate the .venv folder:
+  >```
+  >python -m venv .venv
+  >```
   
-  Both if downloaded the repository manually or using Git, enter inside of the folder that contains the repository files in your terminal.
-  
-  Execute the command below to generate the .venv folder:
-  ```
-  python -m venv .venv
-  ```
-  
-  Now, execute the command below to make the next commands that you execute consider the libraries inside of the .venv folder:
-  <details>
-  <summary>WINDOWS</summary>
-
-  ```
-  .venv/Scripts/actívate
-  ```
-  </details>
-  <details>
-  <summary>LINUX</summary>
-    
-  ```
-  source .venv/bin/activate
-  ```
-  </details>
+  >Now, execute the command below to make the next commands that you execute consider the libraries inside of the .venv folder:
+  ><details>
+  ><summary>WINDOWS</summary>
+  >
+  >```
+  >.venv/Scripts/actívate
+  >```
+  ></details>
+  ><details>
+  ><summary>LINUX</summary>
+  >  
+  >```
+  >source .venv/bin/activate
+  >```
+  ></details>
   </details>
   <details>
   <summary><b>📚 Libraries</b></summary>
