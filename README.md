@@ -19,7 +19,6 @@
   >```
   >
   >If not, just download the repository pressing the "Code" green button at the start of this page and extract the compressed file in the folder of your choice.
-  <br>
   
   >Both if downloaded the repository manually or using Git, enter inside of the folder that contains the repository files in your terminal.
   >
@@ -65,14 +64,15 @@
 <details>
   <summary><b>ℹ️ How to execute the project?</b></summary>
 
-  In the root folder of the project execute the command below:
-   ```
-   python server.py
-   ```
-
-  Wait for the terminal show the URLs where the project is running and access in your browser the URL https://<your_ip>/home
+  >In the root folder of the project execute the command below:
+  >```
+  >python server.py
+  >```
+  >Wait for the terminal show the URLs where the project is running and access in your browser the URL
+  ><br><b>https://<your_ip>/home</b>
 </details>
 </details>
+<br>
 <details close>
    <summary><b>Versão portuguesa (Brasil)</b></summary>
  
@@ -88,35 +88,35 @@
    <details>
    <summary><b>ℹ️ Como instalar o projeto?</b></summary>
  
-   Primeiro, se você possuir o Git instalado em seu computador, execute o comando abaixo no seu terminal na pasta onde deseja baixar o projeto:
-   ```
-   git install 'https://github.com/pedrocorrea2002/talia.git
-   ```
+  > Primeiro, se você possuir o Git instalado em seu computador, execute o comando abaixo no seu terminal na pasta onde deseja baixar o projeto:
+  > ```
+  >git install 'https://github.com/pedrocorrea2002/talia.git
+  >```
+  >
+  >Se não, simplesmente baixe o repositório apertando o botão verde escrito "Code" no início desta página e extraia o arquivo compactado na pasta onde deseja trabalhar com o projeto.
+  
+  >Tanto se você baixou o projeto manualmente ou usando o Git, entre dentro da pasta que possui os arquivos do repositório via terminal.
+  >
+  >Execute o comando abaixo para gerar a pasta .venv:
+  >```
+  >python -m venv .venv
+  >```
    
-   Se não, simplesmente baixe o repositório apertando o botão verde escrito "Code" no início desta página e extraia o arquivo compactado na pasta onde deseja trabalhar com o projeto.
-   
-   Tanto se você baixou o projeto manualmente ou usando o Git, entre dentro da pasta que possui os arquivos do repositório via terminal.
-   
-   Execute o comando abaixo para gerar a pasta .venv:
-   ```
-   python -m venv .venv
-   ```
-   
-   Agora, execute o comando abaixo para fazer os próximos comandos que forem executados considerarem as bibliotecas da pasta .venv:
-   <details>
-   <summary>WINDOWS</summary>
- 
-   ```
-   .venv/Scripts/actívate
-   ```
-   </details>
-   <details>
-   <summary>LINUX</summary>
-     
-   ```
-   source .venv/bin/activate
-   ```
-   </details>
+  >Agora, execute o comando abaixo para fazer os próximos comandos que forem executados considerarem as bibliotecas da pasta .venv:
+  ><details>
+  ><summary>WINDOWS</summary>
+  >
+  >```
+  >.venv/Scripts/actívate
+  >```
+  ></details>
+  ><details>
+  ><summary>LINUX</summary>
+  >  
+  >```
+  >source .venv/bin/activate
+  >```
+  ></details>
    </details>
    <details>
    <summary><b>📚 Bibliotecas</b></summary>
@@ -139,12 +139,11 @@
  <details>
   <summary><b>ℹ️ Como executar o projeto?</b></summary>
 
-  Na pasta raiz do projeto execute o comando abaixo:
-  
-   ```
-   python server.py
-   ```
-
-  Espere o terminal exibir as URLs onde o projeto está rodando e em seu navegador acesse a URL https://<seu_ip>/home
+  >Na pasta raiz do projeto execute o comando abaixo:
+  >```
+  >python server.py
+  >```
+  >Espere o terminal exibir as URLs onde o projeto está rodando e em seu navegador acesse a URL
+  ><br><b>https://<seu_ip>/home</b>
 </details>
  </details>
