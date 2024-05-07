@@ -3,7 +3,12 @@ from keras import models
 from lista_gestos_funcionais import lista_nomes
 
 #* variáveis globais
-model = models.load_model("gestos.h5")
+model = models.load_model("gestos.h5") # TEM UM PROBLEMA NESTA LINHA
+'''
+Could not interpret initializer identifier: {'module': 'keras.initializers', 'class_name': 'Orthogonal', 'config': {'gain': 1.0, 'seed': None}, 'registered_name': None}
+'''
+
+
 threshold = 0.9
 actions = np.array(lista_nomes)
 
